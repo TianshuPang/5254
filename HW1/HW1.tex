@@ -1,0 +1,334 @@
+
+% This is all preamble stuff that you don't have to worry about.
+% Head down to where it says "Start here"
+% --------------------------------------------------------------
+ 
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{braket}
+ 
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+ 
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+ 
+\begin{document}
+ 
+% --------------------------------------------------------------
+%                         Start here
+% --------------------------------------------------------------
+ 
+%\renewcommand{\qedsymbol}{\filledbox}
+ 
+\title{HW1}%replace X with the appropriate number
+\author{Carl Mueller\\ %replace with your name
+CSCI 5254 - Convex Optimization} %if necessary, replace with your course title
+ 
+\maketitle
+
+\subsection*{2.11 a)}
+Show that the hyperbolic set $\{x\ \in\ R^2_+\ |\ \prod^{n}_{i=1}\ x_i\ \ge\ 1\}$ is convex for $n\ = \ 2$.
+ 
+\begin{proposition}{1}
+Consider the convex combination of two points $x,\ y\ \in\ R^2_+$ called $z$.\\
+\begin{align*}
+z=\theta x + (1-\theta) y\\
+\end{align*}
+where the components of $z$ are:\\
+\begin{align*}
+z_1=\theta x_1 + (1-\theta) y_1\\
+z_2=\theta x_2 + (1-\theta) y_2\\
+\end{align*}
+\end{proposition}
+
+\begin{proposition}{2}
+If $x \succeq y$ the $z \succeq y$ and $ z_1z_2 \ge y_1y_2 \ge 1$
+\end{proposition}
+
+\begin{proposition}{3}
+If $y \succeq x$ the $z \succeq x$ and $ z_1z_2 \ge x_1x_2 \ge 1$
+\end{proposition}
+
+\begin{proposition}{4}
+If $x \not\succeq y$ then either $(y_1 - x_1)$ or $(y_2 - x_2)$ is negative.
+Therefore $(y_1 - x_1)(y_2 - x_2) < 0$.
+\end{proposition}
+
+\begin{proof}
+We show that $z_1z_2\ \ge\ 1$:
+
+\begin{align*}
+& (\theta x_1 + (1-\theta) y_1)(\theta x_2 + (1-\theta) y_2) \ge 1\\
+& = \theta^2x_1x_2 + (1-\theta)^2y_1y_2 + \theta(1-\theta)x_1y_2 + \theta(1-\theta)x_2y_1\\
+\text{After some ugly algebra:}\\
+& = \theta x_1x_2 + (1-\theta)y_1y_2 - \theta(1-\theta)(y_1-x_1)(y_2-x_2)\\
+\end{align*}
+\begin{align*}
+\theta x_1x_2 + (1-\theta)y_1y_2 \ge 1
+\end{align*}
+Based on proposition 4, the following is also true:
+\begin{align*}
+- \theta(1-\theta)(y_1-x_1)(y_2-x_2) \ge 0
+\end{align*}
+Therefore:
+\begin{align*}
+\theta x_1x_2 + (1-\theta)y_1y_2 - \theta(1-\theta)(y_1-x_1)(y_2-x_2) \ge 1
+\end{align*}
+Thus proving convexity.
+\end{proof}
+ 
+\subsection*{2.11 b)}
+Show that the hyperbolic set $\{x\ \in\ R^2_+\ |\ \prod^{n}_{i=1}\ x_i\ \ge\ 1\}$ is convex in the general case.\\
+
+\begin{proposition}{1}
+If $a\ ,b\ \ge\ 0$ and $0\ \le\ \theta\ \le\ 1$ then $a^{\theta}b^{1 - \theta}\ \le\ \theta a\ +\ (1\ -\ \theta b)$
+\end{proposition}
+
+\begin{proposition}{2}
+$\prod_{i}x_i\ \ge\ 1$
+\end{proposition}
+
+\begin{proposition}{3}
+$\prod_{i}y_i\ \ge\ 1$
+\end{proposition}
+
+\begin{proof}
+Given $z$ as a convex combination: $z=\theta\ x\ +\ (1-\theta)\ y$, show that $$\prod_{i}\ \theta\ x_i\ +\ (1-\theta)\ y_i\ \ge\ 1$$\\\\
+
+Given proposition 1:
+\begin{align*}
+& \prod_{i} x_i^\theta y_i^\theta  \le \prod_{i} \theta x_i + (1-\theta) y_i = \prod_{i}z_i\\
+& \prod_{i} x_i^\theta y_i^{(1-\theta)}\\
+& = (\prod_{i}x_i)^\theta (\prod_{i}y_i)^{(1-\theta)}
+\end{align*}
+Given propositions 2 and 3:
+\begin{align*}
+&(\prod_{i}x_i)^\theta (\prod_{i}y_i)^{(1-\theta)} \ge 1
+\end{align*}
+Since either term $\prod_{i}x_i$ and $\prod_{i}y_i$ is $\ge\ 1$.
+Thus:
+\begin{align*}
+& 1 \le \prod_{i} x_i^\theta y_i^\theta  \le \prod_{i} \theta x_i + (1-\theta) y_i = \prod_{i}z_i\\
+\end{align*}
+Which therefore proves convexity in the general.
+\end{proof}
+
+\subsection*{2.12 c)}
+The set $\{x\ R^n\ |\ a_1^Tx\ \le\ b_1,\ a_2^Tb_2\ \le\ b_2\}$ is the intersection of two halfspaces:
+\begin{align*}
+a_1^Tx \le b_1\\
+a_2^Tx \le b_2
+\end{align*}
+Halfspaces are convex therefore a wedge is a intersection of convex sets and therefore is convex.
+
+\subsection*{2.12 e)}
+The set $$\{x\ |\ dist(x,S)\ \le\ dist(x,T)\}$$ is not generally convex.
+For example, consider the set $S\ =\ \{x\ | x=(0,0)\}$ (the origin) and the complement set of a ball $T\ =\ \{x\ | U\backslash B(x,r), x=[0,0]\}$ centered at the origin. The original set creates a washer between the ball's complement which is not convex.
+
+\subsection*{2.12 f)}
+The set $\{x\ |\ x\ +\ S_2\ \subseteq\ S_1 \}$ where $S_1$ is convex. If $y\ \in\ S_2$ then $x\ +\ y\ \in\ S_1$. Then the original set: $$\{x\ |\ x\ +\ S_2\ \subseteq\ S_1 \}\ = \cap\ \{x\ |\ x\ +\ y\ \subseteq\ S_1\} \forall y \in S_2$$
+Thus the intersection of all sets of $S_1$ shifted by $-y$ each of which are convex.
+
+\subsection*{2.12 g)}
+The set: $\set{x |\ ||x-a||_2 \le \theta||x-b||_2}$:
+\begin{align*}
+\{x\ |\ ||x-a||_2\ \le\ \theta||x-b||_2\}\\
+= \{x\ |\ ||x-a||_2^2\ \le\ \theta^2||x-b||_2^2\}\\
+\text{Using definition of a ball:}\\
+= \{x\ |\ (x-a)T(x-a)\ \le\ \theta^2(x-b)^T(x-b)\}\\
+= \{x\ |\ (1-\theta^2)x^Tx - 2(a-\theta^2b)^Tx\ +\ a^Ta\ -\ \theta^2b^Tb \le\ 0\}\\
+\end{align*}
+If $\theta = 1$ then the remaining inequality indicates a halfspace.
+For all other values, we're left with a ball. All cases of which are convex.
+
+\subsection*{2.14 a)}
+Given $S \subseteq R^n$, let $||.||$ be a norm in $R^n$, $a \ge 0$, and the set:
+
+\begin{align*}
+S_a = \{x\ |\ dist(x,S) \le\ a\}\ \text{where}\ dist(x,S) = \textbf{inf}_{y\in S}||x-y|| 
+\end{align*}
+Show if $S$ is convex then $S_a$ is convex.\\
+
+
+\begin{proof}
+\begin{align*}
+S_a = \set{x | dist(x,S) \le a} \text{where}\ dist(x,S) = \textbf{inf}_{y\in S}||x-y||\\
+\text{Substitute line segment between $x_1$ \& $x_2$ into the constraint and show $\le\ a$:}\\
+\textbf{inf}_{y\in S}|| \theta x_1 + (1-\theta)x_2-y_o||\\
+\text{Create convex combination representing $y_o$ and substitute:}\\
+\textbf{inf}_{y\in S}|| \theta x_1 + (1-\theta)x_2-\theta y_1 + (1-\theta)y_2||\\
+= \textbf{inf}_{y\in S}|| \theta (x_1 - y_1) + (1-\theta)(x_2 - y_2)||\\
+\text{Triangle inequality and scalability of norm:}\\
+\le (\theta) \textbf{inf}_{y\in S}||(x_1 - y_1)|| + (1-\theta)\textbf{inf}_{y \in S}||x_2 - y_2||\\
+\le a
+\end{align*}
+Thus the set is convex.
+\end{proof}
+
+\subsection*{2.14 b)}
+Given $S \subseteq R^n$, let $||.||$ be a norm in $R^n$, $a \ge 0$, and the set:
+
+\begin{align*}
+S_{-a} = \set{x | B(x,a) \subseteq S}
+\end{align*}
+where $B(x,a)$ is the ball in the norm $||.||$ with center $x$ and radius $a$. 
+Show if $S$ is convex. $S_{-a}$ is convex.
+\begin{align*}
+S_{-a}  = \set{x | ||y-x|| \le a}\\
+\text{Let $x_o = \theta x_1 + (1-\theta)x_2\ \in S_{-a}$}\\
+\text{Let $y_o = \theta y_1 + (1-\theta)y_2\ \in S$}\\
+S_{-a}  = \set{x | ||\theta y_1 + (1-\theta)y_2 - \theta x_1 + (1-\theta)x_2|| \le a}\\
+\text{Triangle inequality and scalability of norm:}\\
+= \theta||(y_1 - x_1)|| + (1-\theta)||(y_2-x_2)||
+\le a
+\end{align*}
+Thus the set is convex.
+
+\subsection*{2.15 a)}
+Given $\alpha \le E[f(x)] \le \beta$ where $\textbf{prob}(x_i = a_i) = p_i$ and $E[f(x)]= \sum_{i=1}^{n}p_if(a_i)$.
+Also the set $P = \set{p | \textbf{1}^TP = 1. p_i > 0}$ is the intersection of a set of halfsapces ($p_i>0$) and a hyperplane($\textbf{1}^TP = 1$) creating a polyhedron and thefore is convex.
+\begin{align*}
+\alpha \le E[f(x)] \le \beta\\
+\alpha \le E[f(x)]\ \cap\ E[f(x)] \le \beta\\
+\alpha \le \sum_{i=1}^{n}p_if(a_i)\ \cap\ \sum_{i=1}^{n}p_if(a_i) \le \beta\\
+\end{align*}
+Each of the above inequalities are inequalities in P since the $E[]$ function lies within the space P.
+Therfore both these inqualities are halfspaces in P, and are convex\\
+Thus $$\alpha \le \sum_{i=1}^{n}p_if(a_i)\ \cap\ \sum_{i=1}^{n}p_if(a_i) \le \beta\\$$ is an intersection of halspaces and is therefore convex.
+
+\subsection*{2.15 b)}
+Given $\alpha \le E[f(x)] \le \beta$ where $\textbf{prob}(x_i \ge \alpha)$.
+Again the set $P = \set{p | \textbf{1}^TP = 1, p_i > 0}$ is the intersection of a set of halfsapces ($p_i>0$) and a hyperplane ($\textbf{1}^TP = 1$) creating a polyhedron and thefore is convex.
+\begin{align*}
+\textbf{prob}(x_i \ge \alpha) = \sum_{x_i\ge\alpha}p_i \le \beta
+\end{align*}
+This is another inquality in the space of P. Since P is convex, therefore the halspace in P is convex and thus the original probability set is convex.
+
+\subsection*{2.15 f)}
+Given $\textbf{var}(x)\le \alpha$.
+
+Let $a = [.75, .25]$, $p = [.5, .5]$, $\alpha = .05$.
+\begin{align*}
+\textbf{var}(x)\le \alpha\\
+\sum_{i=1}^{n}p_ia_i^2 - (\sum_{i=1}^{n}p_ia_i)^2 \le \alpha\\
+\text{Plug in values $a$, $p$ \& $\alpha$:}\\
+(.5*.75^2+.5*.25^2)- (.5*.75+.5*.25)^2\\
+= (.3125) - (.25)\\
+=.0625 \not\le .05
+\end{align*}
+Thus not convex.
+
+\subsection*{2.15 g)}
+Given $\textbf{var}(x)\ge \alpha$.
+
+\begin{align*}
+\textbf{var}(x)\le \alpha\\
+\sum_{i=1}^{n}p_ia_i^2 - (\sum_{i=1}^{n}p_ia_i)^2 \ge \alpha\\
+p^T(a^2) - (p^Ta)^2 \ge \alpha\\
+p^T(a^2) - (p^Taa^Tp) \ge \alpha\\
+\end{align*}
+Since $aa^T$ makes a positive semi-definite matrix, the above defines a convex set.
+
+\subsection*{2.19 a)}
+Let 
+$$f: R^m -> R^n$$
+$$f(x) = \frac{Ax+b}{c^Tx +d}$$
+$$\textbf{dom}f = \set{x | c^Tx + d > 0}$$
+$$C = \set{y | g^Ty \le h},\ \text{where C is convex.}$$
+$$f^{-1}(C) = \set{x \in \textbf{dom}f\ |\ f(x) \in C}$$ 
+Describe $f^{-1}(C)$:
+\begin{proof}
+\begin{align*}
+f^{-1}(C) = \set{x\ |\ g^Tf(x) \in C}\\
+\text{Apply the affine function:}\\
+= \set{x |\ g^T\frac{Ax+b}{c^Tx +d} \le h, c^Tx + d > 0}\\
+= \set{x |\ g^TAx+g^Tb \le hc^Tx + hd, c^Tx + d > 0}\\
+\end{align*}
+This is the intersection of two half spaces:
+$$ \set{x | c^Tx + d > 0} \cap \set{x |\ g^TAx+g^Tb \le hc^Tx + hd, c^Tx + d > 0}$$
+\end{proof}
+
+\subsection*{2.19 b)}
+Let 
+$$f: R^m -> R^n$$
+$$f(x) = \frac{Ax+b}{c^Tx +d}$$
+$$\textbf{dom}f = \set{x | c^Tx + d > 0}$$
+$$C = \set{y | Gy \preceq h},\ \text{where C is convex.}$$
+$$f^{-1}(C) = \set{x \in \textbf{dom}f\ |\ f(x) \in C}$$ 
+Describe $f^{-1}(C)$:
+\begin{proof}
+\begin{align*}
+f^{-1}(C) = \set{y | Gy \preceq h}\\
+\text{Apply the affine function:}\\
+= \set{x \in \textbf{dom}f | Gf(x) \preceq h}\\
+= \set{x | G\frac{Ax+b}{c^Tx +d} \le h, c^Tx + d > 0}\\
+= \set{x | GAx+Gb \le hc^Tx + hd, c^Tx + d > 0}\\
+\end{align*}
+We subtract $Gb$ and $hc^Tx$ from both sides to have the "matrix $\preceq$ vector" form.
+\begin{align*}
+f^{-1}(C) = \set{x | (GA-hc^T)x \preceq hd-Gb, c^Tx+d > 0}
+\end{align*}
+This is again a polyhedron intersecting the domain of f which is a half space.
+\end{proof}
+
+\subsection*{2.33 a)}
+Given $$K_{m+} = \set{x \in \textbf{R}^n | x_1 \ge x_2 \ge ... \ge x_n \ge 0}$$
+Show $K_{m+}$ is proper:\\
+
+Convexity:
+$K_{m+}$ is a system of inequalities $x_1 \ge x_2 \ge ... \ge x_n \ge 0$ which  constitutes a polyhedron.
+
+Closed:
+Since the system of inequalities are not strict, the polyhedron is closed.
+
+Pointed:
+A cone is pointed if $x \in K_{m+}$ \& $-x \in K_{m+}$ if $x = 0$.
+Say $x = [1, 0]$ and $-x = [-1, 0]$. $-x$ violates inequality constraints. Only if $x, -x=0$ are the constraints not violated.
+
+
+\subsection*{2.33 b)}
+Find the dual cone $K_{m+}^*$
+
+Given the definition of the dual cone:$$K^* = \set{y|x^Ty \ge 0\ \forall x \in K}$$ Show that $$\sum_{i=1}^{n}x_iy_i \ge 0\ \forall x \in K_{m+}$$:
+
+\begin{align*}
+\sum_{i=0}^{n}x_iy_i = (x_1 - x_2)y_1 + (x_2-x_3)(y_1 + y_2) + \dots + (x_{n_1}-x_n)(y_i + \dots + y_{n+1})\\
+\text{we know $(x_{n_1}-x_n) \ge 0$ based on the constraints on $K_{m+}$}\\
+\therefore x_Ty \ge 0 \iff y_1,\ y_1+y_2,\ y_1 + \dots + y_n \ge 0\\
+\therefore K^*_{m+} = \set{y | \sum_{i=1}^{n} y_i \ge 0, k=1, \dots, n}
+\end{align*}
+
+\subsection*{2.3)}
+If we can recursively show that the midpoint of the midpoint and the end of a line segment is contained by the set for all line segments, then midpoint convexity implies convexity.
+For example:
+$$\dfrac{x_1+\dfrac{x_1+x_2}{2}}{2} = \dfrac{x_1}{2}+\dfrac{x_1}{4}+\dfrac{x_2}{4} = 3/4x_1 + 1/4x_2\in C$$
+And the next recursion:
+$$\dfrac{x_1+\dfrac{x_1+\dfrac{x_1+x_2}{2}}{2}}{2} = \dfrac{x_1}{2}+\dfrac{x_1}{4}+\dfrac{x_1}{8} +\dfrac{x_2}{8} = 7/8x_1 +1/8x_2\in C$$
+
+The coefficients always add to one, meeting the requirement of convexity for all line segments and the recursively reassigned midpoints. The general pattern shows a consistent convex combination of which the points is always contained in C:
+
+$$(\dfrac{2^k-1}{2^k})x_1 +(1 - \dfrac{2^k-1}{2^k})x_2\in C$$
+
+As $k \rightarrow \infty$:
+
+$$lim_{k \rightarrow \infty} (\dfrac{2^k-1}{2^k})x_1 +(1 - \dfrac{2^k-1}{2^k})x_2 = x_1 \in C$$
+
+
+% --------------------------------------------------------------
+%     You don't have to mess with anything below this line.
+% --------------------------------------------------------------
+ 
+\end{document}
