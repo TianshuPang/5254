@@ -463,28 +463,20 @@ $$f^*(y) = f^*(y) = sup(xy - x^p)$$
 Show that conjugate of the conjugate of a close convex function is itsel: $f = f^{**}$
 \begin{proof}{}
 \begin{align*}
-& \text{Fenchel's Inequality:}\\
-& f^{**}(x) \le f(x) \forall x\\
-& \text{Since } epi(f) \subseteq epif^{**}\\
-& \text{Since $f$ and $f^{**}$ are closed, convex, then Fenchel's inequality becomes the string equality: } epi(f) = epi(f^{**})\\
-& \text{Using a contradiction, suppose: }\\
-& epi(f) \not= epi(f^{**})\\
-& \text{Say point } (x, f^{**}(x)) \not\in epi(f) \rightarrow \text{support hjyperplan separating $epi(f)$ from point}\\
-& \text{But since } epi(f) \subseteq epi(f^{**}) \text{this is a contradictions and therefore: }\\
-& epi(f) = epi(f^{**}) \Rightarrow f = f^{**}
+& f^*(y) = sup(y^Tx - f(x))\\
+& \text{This implies: }\\
+& f^*(y) \ge y^Tx - f(x)\\
+& f(x) \ge y^Tx - f^*(y)\\
+& \exists a < =f^*(y) \text{ such that } f(x) \ge y^Tx + a\\
+& \text{This means that $f(x)$ is greater than all point wise under estiamters whose intercept is less than $f^*(y)$.}\\
+& \text{Let } \hat f(x) = max(y^Tx + a)\\
+& \hat f(x) = sup(y^Tx + a)\\
+& \text{By the result in problem 3.28: } \hat f = f\\
+& f(x) = sup(y^Tx - f^*(y))\\
+& f = f^{**}
 \end{align*}
 \end{proof}
 
-\begin{proof}{$y > 0$}
-\begin{align*}
-& \text{Find the point where the rate of change of the difference is 0 and thus bounded:}\\
-& \frac{d}{dx}yx = \frac{d}{dx}x^p\\
-& y = px^{p-1}\\
-& (\frac{y}{p})^{\frac{1}{p-1}} = x\\
-& \text{The function value for that value of x is: }\\
-& f^*(y) = (p-1)(\frac{y}{p})^{\frac{p}{p-1}}
-\end{align*}
-\end{proof}
 % --------------------------------------------------------------
 %     You don't have to mess with anything below this line.
 % --------------------------------------------------------------
