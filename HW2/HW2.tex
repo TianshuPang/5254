@@ -1,0 +1,357 @@
+% --------------------------------------------------------------
+% This is all preamble stuff that you don't have to worry about.
+% Head down to where it says "Start here"
+% --------------------------------------------------------------
+ 
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{braket}
+ 
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+ 
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+ 
+\begin{document}
+ 
+% --------------------------------------------------------------
+%                         Start here
+% --------------------------------------------------------------
+ 
+%\renewcommand{\qedsymbol}{\filledbox}
+ 
+\title{HW1}%replace X with the appropriate number
+\author{Carl Mueller\\ %replace with your name
+CSCI 5254 - Convex Optimization} %if necessary, replace with your course title
+ 
+\maketitle
+
+\subsection*{3.1)}
+\begin{proposition}{}
+Suppose $f: R \rightarrow R$ is convex, and $a, b \epsilon dom f$ with $a < b$.
+\end{proposition}
+\subsubsection*{a)}
+Show that:
+
+$$
+f(x) \le \frac{b-x}{b-a}f(a) + \frac{x-a}{b-a}f(b)
+$$
+
+\begin{proposition}{1}
+Jensen's inequality: $f(\theta a + (1 - \theta)b) \le \theta f(a) + (1 - \theta) f(b)$
+\end{proposition}
+\begin{proof}
+\begin{align*}
+& \text{Let } x \in [a,b]\\
+& b-x + x-a = b-a\\
+& \frac{b-x}{b-a} + \frac{x-a}{b-a} = 1\\
+& \text{Let } \theta = \frac{b-x}{b-a} \text{ then } 1 - \theta = \frac{x-a}{b-a}\\
+& \text{Let } f(x) = f(\theta a + (1 - \theta)b)\\
+& \text{Using Jenson's inequality:}\\
+& f(\theta a + (1 - \theta)b) \le \theta f(a) + (1 - \theta) f(b)\\
+& f(x) = f(\theta a + (1 - \theta)b) \le \theta f(a) + (1 - \theta) f(b) = \frac{b-x}{b-a}f(a) + \frac{x-a}{b-a}f(b)
+\end{align*}
+\end{proof}
+
+\subsubsection*{b)}
+Show that:
+$\frac{f(x) - f(a)}{x-a} \le \frac{f(b) - f(a)}{b-a} \le \frac{f(b) - f(x)}{b-x}$
+
+\begin{proof}
+\begin{align*} 
+& \text{Using inequality in a), we subtract $f(a)$ from both sides and simplify:}\\
+& f(x) - f(a) \le \frac{b-x}{b-a}f(a) + \frac{x-a}{b-a}f(b) - f(a)\\
+& \frac{f(x) - f(a)}{x-a} \le \frac{(1 - \frac{x-a}{b-a})}{x-a}-\frac{f(a)}{x-a} + \frac{x-a}{(x-a)(b-a)}f(b)\\
+& \frac{f(x) - f(a)}{x-a} \le \frac{f(a)}{x-a} - \frac{f(a)}{b-a}-\frac{f(a)}{x-a} + \frac{f(b)}{b-a}\\
+& \frac{f(x) - f(a)}{x-a} \le \frac{f(b)-f(a)}{b-a}\\
+& \text{The same process can be done by subtracting $f(b)$ from both sides to get: }\\
+& \frac{f(b)}{b-a} \le \frac{f(b)-f(x)}{b-x}\\
+& \text{Combine inequalities: }\\
+& \frac{f(x) - f(a)}{x-a} \le \frac{f(b) - f(a)}{b-a} \le \frac{f(b) - f(x)}{b-x}
+\end{align*}
+\end{proof}
+
+\subsubsection*{c)}
+Show that:
+$ f'(a) \le \frac{f(b) - f(a)}{b-a} \le f'(b)$
+
+\begin{proposition}{1}
+$f'(a) = \lim_{x \to a} \frac{f(x)-f(a)}{x-a}$
+$f'(b) = \lim_{x \to b} \frac{f(x)-f(b)}{x-b}$
+
+\end{proposition}
+
+\begin{proof}
+\begin{align*} 
+& \text{Let: }\\
+& f(b) \ge f(a) + f'(a)(b-a)\\
+& \frac{f(b) - f(a)}{b-a} \ge f'(a) \text{ where } b > a\\
+& \text{and: }\\
+& f(a) \ge f(b) + f'(b)(a-b)\\
+& \frac{f(a) - f(b)}{a-b} \ge f'(b)\\
+& \frac{f(b)-f(a)}{b-a} \le f'(b)\\
+& f'(a) \le \frac{f(b) - f(a)}{b-a} \le f'(b)\\
+\end{align*}
+\end{proof}
+
+\subsubsection*{d)}
+Show that:
+Suppose $f$ is twice differentiable. Use c) to show that $$\frac{f'(b)-f'(a)}{b-a} \ge 0$$
+
+
+\begin{proof}
+\begin{align*} 
+& \text{Differentiate boths sides of result in part b): }\\
+& f''(a) \le \frac{f'(b) - f'(a)}{b-a} \le f''(b)\\
+& \text{Since } b-a \ge 0 \text{ it follows that :}\\
+& 0 \le \lim_{b\to a}f'(a) = \lim_{b\to a}\frac{f'(b)-f'(a)}{b-a}
+\end{align*}
+\end{proof}
+
+\subsection*{3.15)}
+
+For $0 \le \alpha \le 1$ let $$ u_\alpha(x) = \frac{x^{\alpha} - 1}{\alpha}$$
+We also define $u_0(x) = ln(x)$
+
+\subsubsection*{a)}
+
+Show that for $x > 0, u_0(x) = \lim_{\alpha\to 0}u_\alpha(x)$
+
+\begin{proof}
+\begin{align*} 
+& \lim_{\alpha\to 0}u_\alpha(x)\\
+& \text{L'Hopital's Rule: }\\
+& \lim_{\alpha\to 0}x^{\alpha}ln(x)\\
+& = ln(x) = u_0(x) \text{ by given definition.}
+\end{align*}
+\end{proof}
+
+\subsubsection*{b)}
+
+Show that $u_\alpha(x)$ is concave, monotone increasing, and all satisfy $u_\alpha(1) = 0$
+
+\begin{proof}{Monotonicity and Concavity}
+\begin{align*} 
+& \text{Show that: } \nabla^2u_\alpha(x) \le 0 \\
+& u'_\alpha(x) = x^{\alpha - 1} \ge 0 \text{ therefore monotonic increasing.} \\
+& u''_\alpha(x) = (\alpha - 1)x^{\alpha - 2} \ge 0\\
+& \alpha - 1 \text{ is always negative and } x^{\alpha - 2} \text{ is always postive, therefore:}\\
+& u''_\alpha(x) \le 0 \text{ which implies concavity.}
+\end{align*}
+\end{proof}
+\begin{proof}{$u_\alpha(1) = 0$}
+\begin{align*} 
+& \frac{1^\alpha - 1}{\alpha} = 0\ \forall \alpha, \alpha \in (0, 1)  
+\end{align*}
+\end{proof}
+
+\subsection*{3.16)}
+Show if concave, convex, quasiconcave, quasiconvex.
+\subsubsection*{b)}
+$$f(x) = x_1x_2$$
+\begin{proof}{Convexity and Concavity}
+\begin{align*}
+& \nabla^2f(x_1,x_2) = 
+\begin{bmatrix}
+0 & 1 \\
+1 & 0
+\end{bmatrix},\
+\nabla^2-f(x_1,x_2) = 
+\begin{bmatrix}
+0 & -1 \\
+-1 & 0
+\end{bmatrix} \\
+& \text{Neither of which are positive semidefinite or negative semidefinite, respectively, therefore not convex nor concave}.
+\end{align*}
+\end{proof}
+\begin{proposition}{}
+Let $g$ be convex function $$g(x_1) = \frac{\alpha}{x_1}$$
+\end{proposition}
+\begin{proof}{Quasiconvecity \& Quasiconcavity}
+\begin{align*}
+& g'(x_1) = -\frac{\alpha}{x_1^2}\\
+& g'(x_1) = \frac{3\alpha}{x_1^3} \ge 0\ \forall x_1 \in R_{++}\\
+& epi(g(x_1)) = \set{(x_1, x_2) | frac{\alpha}{x_1} \le x_2}\\
+& = \set{(x_1, x_2) | x_1x_2 \ge \alpha} \text{ which is the definition of the superlevel set of $f(x_1,x_2)$} \\
+& \text{Since $g$ is convex, we know its epigraph is convex.}\\
+& \text{Since $f$'s superlevel set is the epigraph of a convex function, we know it is convex}\\
+& \text{Thus f is quasiconvex}
+\end{align*}
+\end{proof}
+
+\subsubsection*{c)}
+$$f(x) = 1/x_1x_2 \text{ on } R^2_{++}$$
+\begin{proof}{Convexity and Concavity}
+\begin{align*}
+& \text{Calculate the Hessian:}\\
+& \nabla^2f(x_1,x_2) = 
+\begin{bmatrix}
+\frac{2}{x_1^3x_2} & \frac{1}{x_1^2x_2^2} \\
+\frac{1}{x_1^2x_2^2} & \frac{2}{x_1x_2^3}
+\end{bmatrix} 
+& \text{}
+\end{align*}
+\end{proof}
+
+
+\subsubsection*{e)}
+$$f(x) = x_1^2/x_2 \text{ on } RxR_{++}$$
+\begin{proof}{Convexity and Concavity}
+\begin{align*}
+& \text{Calculate the Hessian:}\\
+& \nabla^2f(x_1,x_2) = 
+\begin{bmatrix}
+\frac{2}{x_2} & -\frac{2x_1}{x_2^2} \\
+-\frac{2x_1}{x_2^2} & \frac{2x_1^2}{x_2^3}
+\end{bmatrix} \\
+& \text{Using Sylvester's Criterion:}\\
+& \frac{4x_1^2}{x_2^5} - \frac{4x_1^2}{x_2^r} > 0\\
+& \text{Positve semidefinite matrix therefore convex!}\\
+\end{align*}
+\end{proof}
+
+\subsection*{3.18)}
+Use the proof of the log determinant to prove the following:
+
+\subsubsection*{a)}
+
+$f(X)= tr(X^{-1})$ is convex on $dom f = S^{n}_{++}$.
+
+\begin{proof}
+\begin{align*}
+& \text{Using a linear affine funcion substitution:}\\
+& g(t) = f(Z + tV) \text{ where } Z + tV \succ 0\\
+& f(Z + tV) = tr((Z + tV)^{-1})\\
+& = tr((Z^{1/2}(I + tZ^{1/2}V^{-1/2})Z^{-1/2})^{-1})\\
+& = tr((Z^{1/2})^{-1}(I + tZ^{1/2}V^{-1/2})Z^{-1/2})^{-1})\\
+& \text{Using Spectral Decomposition: $\hat{V} = Z^{1/2}VZ^{-1/2} = Q\Lambda Q^T$}\\
+& = tr((Z)^{-1}(I + tQ\Lambda Q^T)^{-1})\\
+& = tr(Z^{-1}(Q^T)^{-1}(I + t\Lambda)^{-1}Q^{-1})\\
+& = tr(Z^{-1}Q(I + t\Lambda)^{-1}Q^T)\\
+& = tr(Q^TZ^{-1}Q(I + t\Lambda)^{-1})\\
+& = \sum_{i,i}(Q^TZ^{-1})(\frac{1}{1+t\lambda_i})\\
+& \text{$(Q^TZ^{-1})_{ii}$ is always postive}\\
+& \text{$(\frac{1}{1+t\lambda_i})$ is a sum of convex functions}\\
+& \text{Therefore $f(X)$ is convex.}
+\end{align*}
+\end{proof}
+
+\subsubsection*{b)}
+
+$f(X)= (det(X))^{1/n}$ is concave on $dom f = S^{n}_{++}$.
+
+\begin{proof}
+\begin{align*}
+& \text{Using a linear affine funcion substitution:}\\
+& g(t) = f(Z + tV) \text{ where } Z + tV \succ 0\\
+& f(g(t)) = (det(Z + tV))^{1/n}\\
+& f(g(t)) = (det(^{1/2}(I + tZ^{1/2}V^{-1/2})Z^{-1/2}))^{1/n}\\
+& f(g(t)) = (det(Z(I + tQ\Lambda Q^T))^{1/n}\\
+& f(g(t)) = (det(Z)det(I + tQ\Lambda Q^T))^{1/n}\\
+& f(g(t)) = det(Z)^{1/n}det(Q^TQ(I + t\Lambda))^{1/n}\\
+& f(g(t)) = det(Z)^{1/n}\prod_i(I + t\lambda_i)^{1/n}\\
+& \text{$\prod_i(I + t\lambda_i)^{1/n}$ is the gemotric mean which is concae thus $f$ is concave.}
+\end{align*}
+\end{proof}
+
+\subsection*{3.19)}
+\subsubsection*{a)}
+
+Show $f(x) = \sum_{}^{}\alpha_ix_i$ is convex where $\alpha_1 \ge \alpha_2 \ge \dots \ge 0$.
+and $x_i$ demnnotes the i'th largest component. Hint: $f(x) = \sum_{i=1}^{k}x_i$ is convex on $R^n$
+
+\begin{proof}
+\begin{align*}
+& f(x) = \alpha_r(x_1 + x_2 + \dots + x_r) + (\alpha_{r-1} - \alpha_r)(x_1 + x_2 + \dots + x_{r-1}) + \dots\\
+& \text{$(x_1 + x_2 + \dots + x_r)$ is convex based of the hint.} \\
+& \text{$\alpha_{r-1} - \alpha_r$ is positive.}\\
+& \text{Therefore $f$ is a sum on nonnegative convex functions}\\
+\end{align*}
+\end{proof}
+
+\subsection*{3.22)}
+Show the following functions are convex.
+
+\subsubsection*{b)}
+$f(x,u,v) = - \sqrt{uv - x^Tx}$ on $dom f = \set{(x,u,v) | uv > x^Tx, u,v >0}$
+
+\begin{proposition}{}
+$\frac{x^Tx}{u}$ and $-\sqrt{x_1x_2}$ is convex on $R_{++}^{2}$.
+\end{proposition}
+
+\begin{proof}
+\begin{align*}
+& \text{Let } h(x_1,x_2) = -\sqrt{x_1x_2}\\
+& \text{Let } g_1(x, u, v) = u \rightarrow concave.\\
+& \text{Let } g_2(x, u, v) = v - \frac{x^Tx}{u} \rightarrow concave.\\
+& \text{$h(g_1,g_2) = f$ is a concave if h is concave $\hat{h}$ is nonincreasing and $g_1,g_2$ are both concave.}\\
+& \text{Thus f is convex.}\\
+\end{align*}
+\end{proof}
+
+\subsubsection*{c)}
+$f(x,u,v) = -log(uv - x^Tx)$ on $dom f = \set{(x,u,v) | uv > x^Tx, u,v >0}$
+
+\begin{proposition}{}
+$\frac{x^Tx}{u}$ and $-\sqrt{x_1x_2}$ is convex on $R_{++}^{2}$.
+\end{proposition}
+\begin{proof}
+\begin{align*}
+& \text{Let } h(x_1,x_2) = -log(x_1x_2) \rightarrow \text{convex and nonincreasing.}\\
+& \text{Let } g_1(x, u, v) = u \rightarrow \text{concave.}\\
+& \text{Let } g_2(x, u, v) = v - \frac{x^Tx}{u} \rightarrow \text{concave.}\\
+& \text{$h(g_1,g_2) = f$ is a convex if h is concave $\hat{h}$ is nonincreasing and $g_1,g_2$ are both concave.}\\
+& \text{Thus f is concave.}
+\end{align*}
+\end{proof}
+
+\subsection*{3.24)}
+Determine if the following are xcconvex, concave, quasiconvex, or quasiconcave.
+
+\subsubsection*{c)}
+$\set{a_1, \dots , a_n}$ where $a_1 < a_2 < \dots < a_n$ with $prob(x=a_i)=p_i$.
+
+$$prob(\alpha \le x \le \beta)$$
+\begin{proof}
+\begin{align*}
+& prob(\alpha \le x \le \beta) = \sum_{i=j}^{k}p_i\\
+& \text{This is a sum of linear function in the probability space, each of which are convex and nonegative.}
+& \text{As a sum of nonegative linear functions, the function is linear.}
+\end{align*}
+\end{proof}
+
+
+\subsubsection*{h)}
+$\set{\beta - \alpha | prob(\alpha \le x \le \beta) \ge 0.9}$
+
+\begin{proposition}{}
+Let $f(p)$ be a function that returns an interval for the given propbability.
+Then $f(\sum_{k=i}^{j}) = a_j - a_i$ and $f(.9) = \gamma$
+\end{proposition}
+\begin{proof}
+\begin{align*}
+& \set{\beta - \alpha | prob(\alpha \le x \le \beta) \ge 0.9}\\
+& \set{\beta - \alpha | \sum_{i=j}^{k}p_i \ge 0.9}\\
+
+
+
+\end{align*}
+\end{proof}
+% --------------------------------------------------------------
+%     You don't have to mess with anything below this line.
+% --------------------------------------------------------------
+ 
+\end{document}
