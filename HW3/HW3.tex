@@ -1,0 +1,440 @@
+% --------------------------------------------------------------
+% This is all preamble stuff that you don't have to worry about.
+% Head down to where it says "Start here"
+% --------------------------------------------------------------
+ 
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{braket}
+ 
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+ 
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+ 
+\begin{document}
+ 
+% --------------------------------------------------------------
+%                         Start here
+% --------------------------------------------------------------
+ 
+%\renewcommand{\qedsymbol}{\filledbox}
+ 
+\title{HW3}
+\author{Carl Mueller\\ %replace with your name
+CSCI 5254 - Convex Optimization} %if necessary, replace with your course title
+\maketitle
+
+\subsection*{4.1)}
+
+\begin{equation*}
+\begin{aligned}
+& \underset{x}{\text{minimize}}
+& & f_0(x_1, x_2)\\
+& \text{subject to}
+& & 2x_1 + x_2 \ge 1\\
+&&& x_1 + 3x_2 \ge 1\\
+&&& x_1 \ge 0, x_2 \ge 0
+\end{aligned}
+\end{equation*}
+Make a sketch of the feasible set:\\\\\\\\\\\\
+
+\subsubsection*{a)}
+
+\begin{equation*}
+\begin{aligned}
+& f_0(x_1, x_2)= x_1 + x_2\\
+& p^* = inf\set{x_1 + x_2 | 2x_1 + x_2 \ge 1, x_1 + 3x_2 \ge 1, x_1 \ge 0, x_2 \ge 0}\\
+& p^* = 3/5\\
+& x^* \in \set{(2/5, 1/5)}
+\end{aligned}
+\end{equation*}
+
+\subsubsection*{b)}
+
+\begin{equation*}
+\begin{aligned}
+& f_0(x_1, x_2)= -x_1 - x_2\\
+& p^* = inf\set{-x_1 - x_1 | 2x_1 + x_2 \ge 1, x_1 + 3x_2 \ge 1, x_1 \ge 0, x_2 \ge 0}\\
+\end{aligned}
+\end{equation*}
+No lowerbound as $x \rightarrow \infty$ \& $x_2 \rightarrow \infty$ is in the feasible set then $-x_1 - x_2 \rightarrow -\infty$
+
+\subsubsection*{c)}
+
+\begin{equation*}
+\begin{aligned}
+& f_0(x_1, x_2)= x_1\\
+& p^* = inf\set{x_1 | 2x_1 + x_2 \ge 1, x_1 + 3x_2 \ge 1, x_1 \ge 0, x_2 \ge 0}\\
+& p^* = 0\\
+& x^* \in \set{(0, x_2)}
+\end{aligned}
+\end{equation*}
+
+\subsubsection*{d)}
+
+\begin{equation*}
+\begin{aligned}
+& f_0(x_1, x_2)= max(x_1, x_2)\\
+& p^* = inf\set{max(x_1, x_2) | 2x_1 + x_2 \ge 1, x_1 + 3x_2 \ge 1, x_1 \ge 0, x_2 \ge 0}\\
+& \text{Say } x_1 = x_2\\
+& 2x_1 = 1- x_1\\
+& x_1 = 1/3\\
+& \therefore\\
+& p^* = 1/3\\
+& x^* \in \set{(1/3, 1/3)}
+\end{aligned}
+\end{equation*}
+
+\subsubsection*{e)}
+
+\begin{equation*}
+\begin{aligned}
+& f_0(x_1, x_2)= x_1^2 + 9x_2^2\\
+& p^* = inf\set{max(x_1, x_2) | 2x_1 + x_2 \ge 1, x_1 + 3x_2 \ge 1, x_1 \ge 0, x_2 \ge 0}\\
+& \text{Let } 2x_1 + x_2 = 1, x_1 + 3x_2 = 1\\
+& 2x_1 + x_2 = 1\\
+& x = (1/3, 1/3)\\
+& x_1 + 3x_2 = 1\\
+& x = (1/2, 1/6) \\
+& \text{ This gives the smallest $p^*$ and satisfies all constraints} \\
+& \therefore\\
+& p^* = 1/2\\
+& x^* \in \set{(1/2, 1/6)}
+\end{aligned}
+\end{equation*}
+
+\subsection*{4.3)}
+
+\text{We use the optimality criterion: }
+$$\nabla_{f_0}(x^*)^T(y-x) \ge 0,\ \forall y \in x, x \in \text{feasible set}$$
+\begin{equation*}
+\begin{aligned}
+& \nabla{f_0}(x^*)\\
+& = ([1, 1/2, -1]\cdot \begin{bmatrix}
+    13 & 12 & -2 \\
+    12 & 17 & 6 \\
+    -2 & 6 & 12 
+    \end{bmatrix} + \begin{bmatrix}
+    -22\\
+    -14.5\\
+    13.0 
+    \end{bmatrix})\cdot \begin{bmatrix}
+    y_1 - 1\\
+    y_2 - 1/2\\
+    y_3 + 1 
+    \end{bmatrix}\\
+& = [-1, 0, 2]\cdot \begin{bmatrix}
+    y_1 - 1\\
+    y_2 - 1/2\\
+    y_3 + 1 
+    \end{bmatrix}\\
+& = -1(y_1 - 1)+ 2(y_2 + 1) \ge 0
+\end{aligned}
+\end{equation*}
+This statistfies the optimality condition.
+
+\subsection*{4.7)}
+
+\subsubsection*{a)}
+
+\begin{equation*}
+\begin{aligned}
+& f_0(x) \text{ is convex}\\
+& \text{Show } frac{f_0(x)}{c^Tx +d} \text{ is quasiconvex.}\\
+& \set{x | frac{f_0(x)}{c^Tx +d} \le \alpha}\\
+& \set{x | f_0(x) \le \alpha(c^Tx +d)}\\
+& \set{x | f_0(x) \le \hat{\alpha}}\\
+& \text{Since $f_0(x)$ is convex, all its level sets are convex}\\
+& \therefore\\
+& \frac{f_0(x)}{c^Tx +d} \text{ is quasiconvex.}\\
+\end{aligned}
+\end{equation*}
+
+\subsubsection*{b)}
+
+\begin{equation*}
+\begin{aligned}
+& \text{Let } t = \frac{1}{c^Tx +d} \text{ \& } y = \frac{x}{c^Tx +d} \\
+& g(y,t) = \frac{f_0(x)}{c^Tx + d}\\
+& \text{$g_i$ is convex since the perspective of a convex function is convex}\\
+& \text{For the constraints, the perspective still holds: }\\
+& \text{Since $f_i$ is convex: } g_i(y,t) \le 0,\ i= 1,\dots,m\\
+& \frac{x}{t} = y\\
+& \frac{Ay}{t} = b\\
+& Ay = bt\\
+& t = \frac{1}{c^Tx + d}\\
+& tc^T(\frac{y}{t}) + dt = 1\\
+& c^Ty + dt = 1
+\end{aligned}
+\end{equation*}
+
+\subsection*{4.8}
+
+\subsubsection*{a)}
+
+\begin{equation*}
+\begin{aligned}
+& \underset{x}{\text{minimize}}
+& & c^Tx\\
+& \text{subject to}
+& & Ax = b\\
+\end{aligned}
+\end{equation*}
+Three scenarios:\\
+1)
+\begin{equation*}
+\begin{aligned}
+& Ax = b \text{ is infeasible, then }\\
+& p^* = \infty
+\end{aligned}
+\end{equation*}
+2)
+\begin{equation*}
+\begin{aligned}
+& Ax = b \text{ is feasible and $c\ \perp \ Null(A)$}\\
+& p^* = c^Tx^* = c^Ty^*
+\end{aligned}
+\end{equation*}
+3)
+\begin{equation*}
+\begin{aligned}
+& Ax = b \text{ is feasible and $c\ \not\perp\ Null(A)$}\\
+& \text{Problem is unbounded and: }\\
+& p^* = -\infty
+\end{aligned}
+\end{equation*}
+\subsubsection*{c)}
+\begin{equation*}
+\begin{aligned}
+& \underset{x}{\text{minimize}}
+& & c^Tx\\
+& \text{subject to}
+& & l \preceq 1 \preceq u \\
+\end{aligned}
+\end{equation*}
+We multiple c into the constraint to get the values for $p^*$: 
+\begin{equation*}
+\begin{aligned}
+c^Tl \preceq c^Tx \preceq c^Tu\\
+p^* = 
+    \begin{cases}
+    c^Tl;& x = l, c > 0\\
+    c^Tu;& x = u, c > 0\\
+    c^Tx;& x \in [l,u], c = 0 
+    \end{cases}
+\end{aligned}
+\end{equation*}
+
+
+\subsection*{4.11}
+
+\subsubsection*{b)}
+
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & ||Ax-b||_1\\
+\end{aligned}
+\end{equation*}
+\begin{equation*}
+\begin{aligned}
+& \sum_{i=1}^{n}|y_i-f(x_i)|\\
+& = t\cdot1\\
+& \text{For the norm given: }\\
+& S = t\cdot1 = \sum_{1}^{n}|Ax-b|\\
+\end{aligned}
+\end{equation*}
+Equivalent to the linear program:
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & t\cdot1\\
+& \text{subject to}
+& & -t \preceq Ax-b \preceq t \\
+\end{aligned}
+\end{equation*}
+The optimal solution is when the $k^{th}$ value is: $$|a_i^Tx-b|=t_i$$
+
+\subsubsection*{b)}
+
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & ||Ax-b||_1\\
+& \text{subject to}
+& & ||x||_{\infty} \le 1
+\end{aligned}
+\end{equation*}
+This is equivalent to the linear program:
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & t\cdot1\\
+& \text{subject to}
+& & -t \preceq Ax-b \preceq t \\
+&&& ||x||_{\infty} \le 1
+\end{aligned}
+\end{equation*}
+The last constraint is equivalent to:
+\begin{equation*}
+\begin{aligned}
+& max(|x_1|,|x_2|,\dots,|x_n|) \le 1\\
+& -\vec{1} \le x \le \vec{1}
+\end{aligned}
+\end{equation*}
+
+\subsection*{4.12)}
+
+We want to minimuze the given cost: 
+$$C = \sum_{i,j=1}^{n}c_{ij}x_{ij}$$
+We want to the net flow to be conserved at each node so that 
+$$b_i + \sum_{j=1}^{n}x_{ij}-\sum_{j=1}^{n}x_{ji}=0,\ i=1,\dots ,n$$
+Flow links are bounded as well: 
+$$l_{ij}\le x_{ij} \le u_{ij}$$
+
+\subsection*{4.15)}
+
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & c^Tx\\
+& \text{subject to}
+& & Ax \preceq b\\
+&&& x \in \set{0,1}, i=1,\dots,n
+\end{aligned}
+\end{equation*}
+Relaxation method:
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & c^Tx\\
+& \text{subject to}
+& & Ax \preceq b\\
+&&& 0 \le x_i \le 1, i=1,\dots,n
+\end{aligned}
+\end{equation*}
+
+\subsubsection*{a)}
+The feasible set of the relaxed problem is a superset of the feasible set of the unrelaxed problem:
+\begin{equation*}
+\begin{aligned}
+& \set{x | Ax \preceq b, x \in \set{0,1}, i=1,\dots,n} \supseteq \set{x | Ax \preceq b, 0 \le x_i \le 1, i=1,\dots,n}
+\end{aligned}
+\end{equation*}
+This means that there exists a $x^*$ in relaxed feasible such that:
+$$f(x^*_{relaxed})=p^*_{relaxed} \le f(x^*_{unrelaxed})=p^*_{unrelaxed}$$
+
+\subsubsection*{b)}
+If the solution to the relaxtion method is such that $x^* \in {0,1}$ then it is a solution to the boolean L.P.
+
+\subsection*{4.23)}
+
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & ||Ax-b||_4
+\end{aligned}
+\end{equation*}
+Note that the norm is defined as:
+$$
+(\sum_{1}^{n}(a_i^Tx-b_1)^4)^{\frac{1}{4}}
+$$
+We solve via a change of variable metho to convert to a quadratic program:
+\begin{equation*}
+\begin{aligned}
+& \text{Define: } y_i = a_i^Tx-b_i\\
+& \text{Defintion} z_i = y_i^2
+\end{aligned}
+\end{equation*}
+The new minimization problem is formulated as:
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & \sum^{n}_{i=1}z^2\\
+& \text{subject to}
+& & y = Ax-b\\
+&&& y^2 = z 
+\end{aligned}
+\end{equation*}\
+
+\subsection*{4.40)}
+
+\subsubsection*{c)}
+
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & (Ax+b)^TF(x)^{-1}(Ax+b)
+\end{aligned}
+\end{equation*}
+We defined this via an epigraph by definiing the above in terms of t-level sets:
+The new minimization problem is formulated as:
+$$
+(Ax+b)^TF(x)^{-1}(Ax+b) \le t
+$$
+For which we minimize t.\\
+The above is equivalent to the below block matrix through Shur's complement:
+$$ 
+\begin{bmatrix}
+F(x) & Ax+b \\
+(Ax+b)^T & t
+\end{bmatrix} \succeq 0
+$$
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & t\\
+& \text{subject to}
+& & \begin{bmatrix}
+F(x) & Ax+b \\
+(Ax+b)^T & t
+\end{bmatrix} \succeq 0
+\end{aligned}
+\end{equation*}
+
+\subsection*{4.43)}
+
+\subsubsection*{a)}
+
+Using a property $\lamba_i(x) \le t$ for some $t$ iff $A(x) \preceq tI$.
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & \lambda_1(x)\\
+& \text{subject to}
+& & A(x) \preceq tI
+\end{aligned}
+\end{equation*}
+
+\subsubsection*{b)}
+Using a property $\lamba_i(x) \le t$ for some $t$ iff $A(x) \preceq tI$ and
+$\lamba_i(x) \ge \gamma$ for some $t$ iff $A(x) \succeq \lamba I$
+\begin{equation*}
+\begin{aligned}
+& {\text{minimize}}
+& & \lambda_1(x)\\
+& \text{subject to}
+& & \gamma I \preceq A(x) \preceq tI
+\end{aligned}
+\end{equation*}
+
+
+% --------------------------------------------------------------
+%     You don't have to mess with anything below this line.
+% --------------------------------------------------------------
+ 
+\end{document}
