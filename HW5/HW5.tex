@@ -1,0 +1,110 @@
+% --------------------------------------------------------------
+% This is all preamble stuff that you don't have to worry about.
+% Head down to where it says "Start here"
+% --------------------------------------------------------------
+ 
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{braket}
+\usepackage{graphicx}
+\usepackage{calligra}
+\usepackage{calrsfs}
+\usepackage{subcaption}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+ 
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+ 
+\begin{document}
+ 
+% --------------------------------------------------------------
+%                         Start here
+% --------------------------------------------------------------
+ 
+%\renewcommand{\qedsymbol}{\filledbox}
+ 
+\title{HW5}
+\author{Carl Mueller\\ %replace with your name
+CSCI 5254 - Convex Optimization} %if necessary, replace with your course title
+\maketitle
+
+\subsection*{6.1}
+\begin{proposition}{1}
+\begin{align}
+log(x+1) \le x\\ -log(x+1) \ge x\\ x > -1
+\end{align}
+\end{proposition}
+
+\begin{proposition}{2}
+\begin{align}
+-log(1-x)\ \text{is convex}
+\end{align}
+\end{proposition}
+\begin{proposition}{3}
+\begin{align}
+\phi(||u||_{\infty}) = -a^2log(1-\frac{||u||_{\infty}}{a^2})
+\end{align}
+\end{proposition}
+
+Left inequality working backwards:
+\begin{equation*}
+\begin{aligned}
+||u||_{2}^{2} \le -a^2\sum_{i=1}^{m}log(1 - \frac{u_{i}^{2}}{a^2})\\
+\sum_{i=1}^{m}\frac{|u_i|^2}{a^2} \le -\sum_{i=1}^{m}log(1 - \frac{u_{i}^{2}}{a^2})\\
+\end{aligned}
+\end{equation*}
+Given proposition 1:
+\begin{equation*}
+\begin{aligned}
+\sum_{i=1}^{m}\frac{|u_i|^2}{a^2} \le -\sum_{i=1}^{m}log(1 - \frac{u_{i}^{2}}{a^2})\\
+\text{true when: }\\
+- \frac{u_{i}^{2}}{a^2} \ge -1
+\end{aligned}
+\end{equation*}
+
+Right inequality:
+\begin{equation*}
+\begin{aligned}
+\text{Given: } u_{i}^{2} \le ||u_i||_{\infty}^{2}\\
+\sum_{i=1}^{m}-log(1 - \frac{u_{i}^{2}}{a^2}) \le \sum_{i=1}^{m}-log(1 - \frac{||u_{i}||_{\infty}^{2}}{a^2})\ \text{given proposition 1}\\
+\sum_{i=1}^{m}-log(1 - \frac{u_{i}^{2}}{a^2}) \le \frac{u_{i}^{2}}{||u||_{2}^{\infty}}\sum_{i=1}^{m}-log(1 - \frac{||u_{i}||_{\infty}^{2}}{a^2})\ \text{given $\frac{u_{i}^{2}}{||u||_{2}^{\infty}} \ge 1$}\\
+-a^2\sum_{i=1}^{m}log(1 - \frac{u_{i}^{2}}{a^2}) \le -a^2\frac{u_{i}^{2}}{||u||_{2}^{\infty}}\sum_{i=1}^{m}log(1 - \frac{||u_{i}||_{\infty}^{2}}{a^2})\\
+-a^2\sum_{i=1}^{m}log(1 - \frac{u_{i}^{2}}{a^2}) \le \frac{u_{i}^{2}}{||u||_{2}^{\infty}}\phi(||u||_{\infty})\\
+\end{aligned}
+\end{equation*}
+
+\subsection*{6.9}
+To show convexity, the following level set must be convex:
+
+$$S_{\alpha} = \set{t_i| \max_{i=1,\dots,k}|\frac{p(t_i)}{q(t_i)} - y_i| \le \alpha}$$
+
+Due to absolute value, following inequalities must hold:
+\begin{equation*}
+\begin{aligned}
+-\alpha q(t_i) \le y_i q(t_i)-p(t_i) \le \alpha q(t_i)
+\end{aligned}
+\end{equation*}
+
+\begin{equation*}
+\begin{aligned}
+\end{aligned}
+\end{equation*}
+
+% --------------------------------------------------------------
+%     You don't have to mess with anything below this line.
+% --------------------------------------------------------------
+ 
+\end{document}
