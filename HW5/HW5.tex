@@ -97,11 +97,60 @@ Due to absolute value, following inequalities must hold:
 -\alpha q(t_i) \le y_i q(t_i)-p(t_i) \le \alpha q(t_i)
 \end{aligned}
 \end{equation*}
+ This is represent two inequalities that define a polyhedron and is therefore convex. Since the level set is convex,
+ the original minimzation problem is at least quasiconvex.
+
+\subsection*{7.3}
+
+\begin{proposition}{1}
+\begin{align}
+P(x|y=1) = \frac{1}{\sqrt{2 \pi}}\int_{x}^{\infty}e^{\frac{-z^2}{2}}dz\\
+P(x|y=0) = 1 - \frac{1}{\sqrt{2 \pi}}\int_{x}^{\infty}e^{\frac{-z^2}{2}}dz
+\end{align}
+\end{proposition}
+
+Ordering probability terms in order of $y=1$ and $y=0$, our total probability is:
+\begin{equation*}
+\begin{aligned}
+p(a,b) = \prod_{i=1}^{q}P_i(a^Tu_i+b|y=1)\prod_{i=q+1}^{m}(1-P_i(a^Tu_i+b|y=0))\\
+\end{aligned}
+\end{equation*}
+The negative log likelihood:
+\begin{equation*}
+\begin{aligned}
+l(a,b) = \sum_{i=1}^{q}-log(P_i(a^Tu_i+b|y=1))+\sum_{i=q+1}^{m}-log(1-P_i(a^Tu_i+b|y=0))
+\end{aligned}
+\end{equation*}
+The negative log likelihood is a convex function, so minimizing this function is a convex optimization problem.
+
+\subsection*{7.4}
+\begin{proposition}{1}
+\begin{align}
+\text{Sample mean: }
+u = \frac{1}{N}\sum_{k=1}^{N}y_k\\
+\text{Covariance: }
+Y = \frac{1}{N}\sum_{k=1}^{N}(y_k-u)(y_k-u)^T
+\end{align}
+\end{proposition}
 
 \begin{equation*}
 \begin{aligned}
+-\frac{N}{2}nlog(2\pi)-\frac{N}{2}log(det(R))- \frac{1}{2}R^{-1}\sum_{k=1}^{N}(y_k-a)(y_k-a)^T\\
+= -\frac{N}{2}nlog(2\pi)-\frac{N}{2}log(det(R))- \frac{1}{2}R^{-1}\sum_{k=1}^{N}(y_ky_k^T-ay_k^T-y_ka^T+aa^T)\\
+= -\frac{N}{2}nlog(2\pi)-\frac{N}{2}log(det(R))- \frac{1}{2}R^{-1}(\sum_{k=1}^{N}y_ky_k^T-\sum_{k=1}^{N}ay_k^T-\sum_{k=1}^{N}y_ka^T+\sum_{k=1}^{N}aa^T))\\
+= -\frac{N}{2}nlog(2\pi)-\frac{N}{2}log(det(R))- \frac{1}{2}R^{-1}(\sum_{k=1}^{N}y_ky_k^T-\sum_{k=1}^{N}ay_k^T-\sum_{k=1}^{N}y_ka^T+Naa^T)\\
 \end{aligned}
 \end{equation*}
+Substitute sample mean:
+\begin{equation*}
+\begin{aligned}
+= -\frac{N}{2}nlog(2\pi)-\frac{N}{2}log(det(R))- \frac{1}{2}R^{-1}\sum_{k=1}^{N}y_ky_k^T-Nay^T-Nua^T+Naa^T\\
+= R^{-1}\sum_{k=1}^{N}(y_k-a)(y_k-a)^T-R^{-1}N(a-u)(a-u)^T\\
+= -\frac{N}{2}nlog(2\pi)-\frac{N}{2}log(det(R))- \frac{1}{2}(NR^{-1}Y + R^{-1}N(a-u)(a-u)^T)\\
+= -\frac{N}{2}nlog(2\pi)-\frac{N}{2}log(det(R))- \frac{1}{2}(Ntr(R^{-1}Y) + N(a-u)R^{-1}(a-u)^T)
+\end{aligned}
+\end{equation*}
+
 
 % --------------------------------------------------------------
 %     You don't have to mess with anything below this line.
