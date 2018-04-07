@@ -124,6 +124,7 @@ l(a,b) = \sum_{i=1}^{q}-log(P_i(a^Tu_i+b|y=1))+\sum_{i=q+1}^{m}-log(1-P_i(a^Tu_i
 The negative log likelihood is a convex function, so minimizing this function is a convex optimization problem.
 
 \subsection*{7.4}
+\subsubsection*{a)}
 \begin{proposition}{1}
 \begin{align}
 \text{Sample mean: }
@@ -141,6 +142,7 @@ Y = \frac{1}{N}\sum_{k=1}^{N}(y_k-u)(y_k-u)^T
 = -\frac{N}{2}nlog(2\pi)-\frac{N}{2}log(det(R))- \frac{1}{2}R^{-1}(\sum_{k=1}^{N}y_ky_k^T-\sum_{k=1}^{N}ay_k^T-\sum_{k=1}^{N}y_ka^T+Naa^T)\\
 \end{aligned}
 \end{equation*}
+
 Substitute sample mean:
 \begin{equation*}
 \begin{aligned}
@@ -151,6 +153,66 @@ Substitute sample mean:
 \end{aligned}
 \end{equation*}
 
+Set the gradient to zero to see $a$ and $R$ optimal values.
+\begin{equation*}
+\begin{aligned}
+\nabla_a l(R,a) = -2R^{-1}(a-u) = 0\\
+\therefore a=u \\
+\nabla_R l(R,a) = -R^{-1} + R^{-1}(Y - (a-u)(a-u)^T)R^{-1} = 0\\
+R = Y + (a-u)(a-u)^T\\
+R = Y + (0)(0)^T\\
+\therefore R=Y
+\end{aligned}
+\end{equation*}
+
+\subsection*{7.8}
+
+Express sign function as a probability where we order values with $y>1$ followed by $y<0$:
+\begin{equation*}
+\begin{aligned}
+\prod_{i=1}^{k}prob(a_i^Tx + b_i + v_i > 0)\prod_{i=k+1}^{m}prob(a_i^Tx + b_i + v_i < 0)
+\end{aligned}
+\end{equation*}
+
+Since $a_i$ and $b_i$ are known values, the only RV is the noise term. We can epxress $v_i$ as an expression of $a_i^Tx+b_i$. P represents the cumulative density function of $v_i$. We can represent the probability as follows:
+\begin{equation*}
+\begin{aligned}
+\prod_{i=1}^{k}P(-a_i^Tx-b_i)\prod_{i=k+1}^{m}1-P(-a_i^Tx-b_i) 
+\end{aligned}
+\end{equation*}
+
+Log likelihood below is concave so if we maximize, we obtain a convex problem:
+\begin{equation*}
+\begin{aligned}
+l(x) = \sum_{i=1}^{k}log(P(-a_i^Tx-b_i))+\sum_{i=k+1}^{m}log(1-P(-a_i^Tx-b_i))\\ 
+\end{aligned}
+\end{equation*}
+
+\subsection*{7.9}
+Given $$y_i = f(a_i^Tx +b_i +v_i), i=1,\dots,m$$
+We know that $a_i$ and $b_i$ are knowns, so lets expression the random variable $v_i$ as an expression of all other terms. We assume that $f$ is an invertible function.
+$$v_i = f^{-1}(y_i)-a_i^Tx-b_i$$
+The probability of observing $y_i,/dots,y_m$ is:
+\begin{equation*}
+\begin{aligned}
+\prod_{i=1}^{m}prob(f^{-1}(y_i)-a_i^Tx-b_i)\\
+l(x, f) = \sum_{i=1}^{m}log(prob(f^{-1}(y_i)-a_i^Tx-b_i))
+\end{aligned}
+\end{equation*}
+This log probability is concave w.r.t x and f. Thus maximizing generates a convex optimization problem.\\\\
+
+\textbf{Additional Exercises:}\\\\
+
+\subsection*{3.9}
+Given $$$$
+
+The probability of observing $y_i,/dots,y_m$ is:
+\begin{equation*}
+\begin{aligned}
+\prod_{i=1}^{m}prob(f^{-1}(y_i)-a_i^Tx-b_i)\\
+l(x, f) = \sum_{i=1}^{m}log(prob(f^{-1}(y_i)-a_i^Tx-b_i))
+\end{aligned}
+\end{equation*}
 
 % --------------------------------------------------------------
 %     You don't have to mess with anything below this line.
