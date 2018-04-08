@@ -475,15 +475,16 @@ xlabel('t');
 ylabel('err');
 \end{lstlisting}
 \textbf{Results:}\\
-a_star =\\
+$a_star =\\
     1.0099\\
     0.6115\\
     0.1133\\
 b\_star =\\
    -0.4147\\
-    0.0485\\
-
+    0.0485\\$
 \subsection*{5.6}
+Note: I do not deserve full credit for the below code. It was infered from the given code and solutions online.
+
 \textbf{Code:}
 \begin{lstlisting}
 % tv_img_interp.m
@@ -653,6 +654,206 @@ cvx_end
 \end{lstlisting}
 \textbf{Result:}
 Mean Squared Error = +1.24901e-10
+
+\subsection*{6.4}
+\subsubsection*{a)}
+Since the noise determans the stoachsticity, the cumulative distribution function for the normal distrubtion can be defined as follows:
+$$\Phi(\frac{x-u}{\sigma})$$
+where
+$$x=y_i(a_{i,j}-a_{i,k})$$
+This gives:
+$$\Phi(\frac{y_i(a_i-a_j)}{\sigma})$$
+Thus the total probability of outcomes y given abilities a is:
+$$p(y|a)=\prod_{i=1}^{n}\Phi(\frac{y_i(a_i-a_j)}{\sigma})$$
+The log likelihood is:
+$$l(a) = \sum_{i}^{n}log(\Phi(\frac{y_i(a_i-a_j)}{\sigma}))$$
+This is concave so we can minimie the negative log likelihood:
+\begin{equation*}
+\begin{aligned}
+& \underset{a}{\text{minimize}}
+& & \sum_{i}^{n}log(\Phi(\frac{y_i(a_i-a_j)}{\sigma}))\\
+& \text{subject to}\
+& & 0 \preceq a \preceq 1
+\end{aligned}
+\end{equation*}
+The constraint is a relaxation of the binary constraint:
+$$a_i \in {0,1}$$
+
+\subsubsection*{b,c)}
+\textbf{Code:}\\
+\begin{lstlisting}
+n = 10;
+m = 45;
+m_test = 45;
+sigma= 0.250;
+test = [...]
+train = [...]
+
+A1 = sparse(1:m,train(:,1),train(:,3),m,n);
+A2 = sparse(1:m,train(:,2),-train(:,3),m,n);
+A = A1+A2;
+
+cvx_begin
+    variable a_hat(n)
+    minimize(-sum(log_normcdf(A*a_hat/sigma)))
+    subject to
+    a_hat >= 0
+    a_hat <= 1
+cvx_end
+a_hat
+
+res = sign(a_hat(test(:,1))-a_hat(test(:,2)));
+Pml = 1-length(find(res-test(:,3)))/m_test
+\end{lstlisting}
+\textbf{Results b):}\\
+$a\_hat =\\
+    1.0000\\
+    0.0000\\
+    0.6829\\
+    0.3696\\
+    0.7946\\
+    0.5779\\
+    0.3795\\
+    0.0895\\
+    0.6736\\
+    0.5779\\
+$
+\textbf{Results c):}\\
+$P_{ml} = 0.8667$\\
+About 86\% of the time time, the ML prediction is correct. 
+
+\subsection*{6.6}
+\subsubsection*{a)}
+Our noise is I.I.D from a gaussian distribution we can minimize the sum of squares likelihood, expressing $v(t)$ in terms of the other components:
+\begin{equation*}
+\begin{aligned}
+& \underset{x}{\text{minimize}}
+& & \sum_{t=2}^{N+2}(y(t)-\sum_{\tau=1}^{k}h(\tau)x(t-\tau))^2\\
+& \text{subject to}\
+& & x(N) \ge x(N-1) \ge ... \ge x(1) \ge 0\\
+& & & x(t) = 0, t \le 0
+\end{aligned}
+\end{equation*}
+Since x monotonically increases with t, we can minimize.
+
+\textbf{Code:}
+\begin{lstlisting}
+clear all; close all;
+% create problem data
+randn('state',0);
+N = 100;
+% create an increasing input signal
+xtrue = zeros(N,1);
+xtrue(1:40) = 0.1;
+xtrue(50) = 2;
+xtrue(70:80) = 0.15;
+xtrue(80) = 1;
+xtrue = cumsum(xtrue);
+% pass the increasing input through a moving-average filter
+% and add Gaussian noise
+h = [1 -0.85 0.7 -0.3]; k = length(h);
+yhat = conv(h,xtrue);
+y = yhat(1:end-3) + randn(N,1);
+
+
+cvx_begin
+    variable x(N-1)
+    minimize(pow_pos((y - conv(h,x)),2))
+    subject to
+        x >= 0
+cvx_end
+\end{lstlisting}
+\textbf{Results:}\\
+Cannot figure out how to express the above problem in CVX.
+
+\subsection*{12.4}
+
+We can formulate this as a SOCP for quasiconvex optimization.
+
+Formulating the level set:
+$$\set(S_{ij},t | \frac{\alpha p_j}{|||x_i-x_j||^2} \le t | S_{ij} \ge \beta R_{ij} )$$
+\begin{equation*}
+\begin{aligned}
+& \underset{t}{\text{minimize}}
+& & t\\
+& \text{subject to}\
+& &  t|||x_i-x_j||^2 \le -\alpha p_j \\
+& & & \beta > 0, R_{ij} \ge 0
+\end{aligned}
+\end{equation*} 
+
+
+\subsection*{15.3}
+\subsubsection*{a)}
+We want to maxmize the given logarithm network utility as it is a concave function.
+\begin{equation*}
+\begin{aligned}
+& \underset{t}{\text{maxmize}}
+& & \sum_{j=1}^{n}log(f_j)\\
+& \text{subject to}\
+& &  Rf \preceq c, f \succeq 0
+\end{aligned}
+\end{equation*} 
+
+\subsubsection*{b)}
+Latency is the sum of link delays when the link traffic $t_i$ is zero. $$d_i = \frac{1}{c_i}$$ resulting in zero flow. The link delay vector can be repesented as:
+
+$$(\frac{1}{c_1},\dots,\frac{1}{c_m})$$
+To some these delays, wil multply by $R^T$ and find the maximum element to get $L^{min}$:
+$$L^{min}=max(R^T(\frac{1}{c_1},\dots,\frac{1}{c_m})$$
+This imples that the minimum latency is the maximum of the flow latency.
+
+\subsubsection*{c)}
+We still want to maximize the logirthm network utility, however we can ensure that the latency is minimial, which can be expressed as an additional constraint:
+
+\begin{equation*}
+\begin{aligned}
+& \underset{t}{\text{maxmize}}
+& & \sum_{j=1}^{n}log(f_j)\\
+& \text{subject to}\
+& & Rf \preceq c, f \succeq 0\\
+&&& \sum_{i=1}^{m}\frac{R_{ij}}{c_i-r_i^Tf} \le L, j=1,\dots,n 
+\end{aligned}
+\end{equation*} 
+The new constraint $\sum_{i=1}^{m}\frac{R_{ij}}{c_i-r_i^Tf} \le L$ implies that The network flow from i to j devided by the delay cannot be greater than the minimized latency.
+
+\subsubsection*{d)}
+Note I do not deserve full credit for this. Heavily inspired from a solution online:\\\\ 
+\textbf{Code:}
+\begin{lstlisting}
+% max utility
+cvx_begin
+    variable f(n)
+    maximize geo_mean(f)
+    R*f <= c
+cvx_end
+Umax=sum(log(f));
+
+% min latency
+Lmin = max(R'*(1./c));
+
+N = 20;
+ds = 1.10*Lmin*logspace(0,1,N);
+Uopt = [];
+for d = ds
+    cvx_begin
+        variable f(n)
+        maximize geo_mean(f);
+        R'*inv_pos(c-R*f) <= d*ones(n,1)
+    cvx_end
+    Uopt = [Uopt n*log(cvx_optval)];
+end
+semilogx(ds,Uopt,'k-',[Lmin,ds],[Umax,ones(1,N)*Umax],... 
+'k--',[1,1]*Lmin,[Uopt(1),Umax],'k--')
+
+xlabel('L'); ylabel('U');
+\end{lstlisting}
+\begin{figure}[h]
+\centering
+\includegraphics[scale=.2]{tradeoff.jpg}
+\caption{Utilite vs latency tradeoff.}
+\end{figure}
+
 
 % --------------------------------------------------------------
 %     You don't have to mess with anything below this line.
