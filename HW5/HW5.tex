@@ -12,6 +12,7 @@
 \usepackage{calligra}
 \usepackage{calrsfs}
 \usepackage{subcaption}
+\usepackage{listings}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
  
@@ -192,7 +193,7 @@ l(x) = \sum_{i=1}^{k}log(P(-a_i^Tx-b_i))+\sum_{i=k+1}^{m}log(1-P(-a_i^Tx-b_i))\\
 Given $$y_i = f(a_i^Tx +b_i +v_i), i=1,\dots,m$$
 We know that $a_i$ and $b_i$ are knowns, so lets expression the random variable $v_i$ as an expression of all other terms. We assume that $f$ is an invertible function.
 $$v_i = f^{-1}(y_i)-a_i^Tx-b_i$$
-The probability of observing $y_i,/dots,y_m$ is:
+The probability of observing $y_i,\dots,y_m$ is:
 \begin{equation*}
 \begin{aligned}
 \prod_{i=1}^{m}prob(f^{-1}(y_i)-a_i^Tx-b_i)\\
@@ -202,17 +203,216 @@ l(x, f) = \sum_{i=1}^{m}log(prob(f^{-1}(y_i)-a_i^Tx-b_i))
 This log probability is concave w.r.t x and f. Thus maximizing generates a convex optimization problem.\\\\
 
 \textbf{Additional Exercises:}\\\\
-
 \subsection*{3.9}
-Given $$$$
+\subsubsection*{a)}
+Given: $$z = [\Re x, \Im x]$$
 
-The probability of observing $y_i,/dots,y_m$ is:
+Setup a system of equations using the vector breakdown of x for its $\Re$ and $\Im$ components:
 \begin{equation*}
 \begin{aligned}
-\prod_{i=1}^{m}prob(f^{-1}(y_i)-a_i^Tx-b_i)\\
-l(x, f) = \sum_{i=1}^{m}log(prob(f^{-1}(y_i)-a_i^Tx-b_i))
+||x||_2^2 = ||z||_2^2\\
+\begin{bmatrix}
+\Re A & -\Im A\\
+\Im A & \Re A
+\end{bmatrix}
+\begin{bmatrix}
+\Re x \\
+\Im x
+\end{bmatrix}=
+\begin{bmatrix}
+\Re b\\
+\Im b
+\end{bmatrix}
 \end{aligned}
 \end{equation*}
+
+This becomes the optimization problem:
+\begin{equation*}
+\begin{aligned}
+& \underset{z}{\text{minimize}}
+& & ||z||_2\\
+& \text{subject to}\
+& &
+\begin{bmatrix}
+\Re A & -\Im A\\
+\Im A & \Re A
+\end{bmatrix}
+\begin{bmatrix}
+\Re x \\
+\Im x
+\end{bmatrix}=
+\begin{bmatrix}
+\Re b\\
+\Im b
+\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+\subsubsection*{b)}
+Define the second order cone:
+\begin{equation*}
+\begin{aligned}
+K_i = \set{(z,t)| ||z||_2 \le t}
+\end{aligned}
+\end{equation*}
+The SOCP:
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{minimize}}
+& & t\\
+& \text{subject to}\
+& |z||_2\\
+& &
+\begin{bmatrix}
+\Re A & -\Im A\\
+\Im A & \Re A
+\end{bmatrix}
+\begin{bmatrix}
+\Re x \\
+\Im x
+\end{bmatrix}=
+\begin{bmatrix}
+\Re b\\
+\Im b
+\end{bmatrix}\end{aligned}
+\end{equation*}
+\subsubsection*{c)}
+\textbf{Code:}
+\begin{lstlisting}
+randn('state',0);
+m = 30; n = 100;
+Are = randn(m,n); Aim = randn(m,n);
+bre = randn(m,1); bim = randn(m,1);
+A = Are + i*Aim;
+b = bre + i*bim;
+
+Atot = [Are -Aim; Aim Are];
+btot = [bre; bim];
+z_2 = Atot'*inv(Atot*Atot')*btot;
+x_2 = z_2(1:100) + i*z_2(101:200);
+
+cvx_begin
+    variable x(n) complex
+    minimize( norm(x) )
+    subject to
+    A*x == b;
+cvx_end
+
+cvx_begin
+    variable xinf(n) complex
+    minimize( norm(xinf,Inf) )
+    subject to
+    A*xinf == b;
+cvx_end
+
+figure(1)
+scatter(real(x),imag(x)), hold on,
+scatter(real(xinf),imag(xinf),[],'filled'), hold off,
+axis([-0.2 0.2 -0.2 0.2]), axis square,
+xlabel('Re x'); ylabel('Im x');
+\end{lstlisting}
+Results:
+\begin{figure}[h]
+\includegraphics[scale=.25]{39c.jpg}
+\end{figure}
+The red dots represent the infinity norm.
+
+\subsection*{4.1}
+\subsubsection*{a)}
+Code:
+\begin{lstlisting}
+M = [1 -1/2; -1/2 2];
+m = [-1 0]';
+A = [1 2; 1 -4; 5 76];
+b = [-2 -3 1]';
+delta = .1
+
+cvx_begin
+    variable x(2)
+    dual variable y
+    minimize(quad_form(x, M)+m'*x)
+    subject to
+        y: A*x <= b;
+cvx_end
+p_star = cvx_optval
+y
+x
+\end{lstlisting}
+\textbf{Results:}\\
+p\_star = 8.2222\\
+y = \\1.8994\\
+    3.4684\\
+    0.0931\\
+x =\\-2.3333\\
+    0.1667\\\\
+\underline{KKT Conditions}\\
+Primal:\\
+$$x_1^* + 2x_2^* \le u_1$$
+$$x_1^* + -4x_2^* \le u_2$$
+$$5x_1^* + 76x_2^*\le 1$$
+Dual:\\
+$$\lambda_1^*, \lambda_2^*, \lambda_3^* \ge 0$$
+Complementary Slackness:
+$$\lambda_1^*(x_1^* + 2x_2^* - u_1)=0$$
+$$\lambda_2^*(x_1^* + -4x_2^* - u_2)=0$$
+$$\lambda_3^*(5x_1^* + 76x_2^* - 1)=0$$
+First Order Conditions:
+$$4x_2^*-x_1^*+2\lambda_1^*-4\lambda_2^*+76\lambda_3^*=0$$
+$$2x_1^* -x_2^*-1+\lambda_1^*+\lambda_2^*+5\lambda_2^*=0$$
+\subsubsection*{b)}
+\textbf{Code:}
+\begin{lstlisting}
+M = [1 -1/2; -1/2 2];
+m = [-1 0]';
+A = [1 2; 1 -4; 5 76];
+b = [-2 -3 1]';
+
+cvx_begin
+    variable x(2)
+    dual variable y
+    minimize(quad_form(x, M)+m'*x)
+    subject to
+        y: A*x <= b;
+cvx_end
+p_star = cvx_optval
+
+array = [0 -1 1];
+table = [];
+delta = 0.1;
+
+for i = array
+    for j = array
+        p_pred = p_star - [y(1) y(2)]*[i; j]*delta;
+        cvx_begin
+            variable x(2)
+            minimize(quad_form(x,M)+m'*x)
+            subject to
+                A*x <= b+[i;j;0]*delta
+        cvx_end
+        p_exact = cvx_optval;
+        table = [table; i*delta j*delta p_pred p_exact]
+    end
+end
+\end{lstlisting}
+\textbf{Results:}
+\begin{center}
+  \begin{tabular}{ | c | c | c | c |}
+  \hline
+    d_1 & d_2 & p^*_{pred} & p^*_{exact} \\ \hline
+    0 &        0  &  8.2222  &  8.2222 \\ \hline
+    0&   -0.1000    &8.5691   & 8.7064 \\ \hline
+    0    &0.1000    &7.8754    &7.9800 \\ \hline
+    -0.1000&         0 &   8.4122 &    8.5650 \\ \hline
+    -0.1000&   -0.1000  &  8.7590  &  8.8156 \\ \hline
+    -0.1000&    0.1000  &  8.0653  &  8.3189 \\ \hline
+    0.1000 &        0   & 8.0323   & 8.2222 \\ \hline
+    0.1000 &  -0.1000    &8.3791   & 8.7064 \\ \hline
+    0.1000 &   0.1000   & 7.6854   & 7.7515 \\ \hline
+  \end{tabular}
+\end{center}
+We can see that $p^*_{pred} \le p^*_{exact}$ for all pertubations.
+
+
 
 % --------------------------------------------------------------
 %     You don't have to mess with anything below this line.

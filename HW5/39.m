@@ -10,21 +10,20 @@ btot = [bre; bim];
 z_2 = Atot'*inv(Atot*Atot')*btot;
 x_2 = z_2(1:100) + i*z_2(101:200);
 
-% 2-norm problem solution with cvx
 cvx_begin
     variable x(n) complex
     minimize( norm(x) )
     subject to
     A*x == b;
 cvx_end
-% inf-norm problem solution with cvx
+
 cvx_begin
     variable xinf(n) complex
     minimize( norm(xinf,Inf) )
     subject to
     A*xinf == b;
 cvx_end
-% scatter plot
+
 figure(1)
 scatter(real(x),imag(x)), hold on,
 scatter(real(xinf),imag(xinf),[],'filled'), hold off,
