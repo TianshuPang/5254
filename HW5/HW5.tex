@@ -398,7 +398,7 @@ end
 \begin{center}
   \begin{tabular}{ | c | c | c | c |}
   \hline
-    d_1 & d_2 & p^*_{pred} & p^*_{exact} \\ \hline
+    $d_1$ & $d_2$ & $p^*_{pred}$ & $p^*_{exact}$ \\ \hline
     0 &        0  &  8.2222  &  8.2222 \\ \hline
     0&   -0.1000    &8.5691   & 8.7064 \\ \hline
     0    &0.1000    &7.8754    &7.9800 \\ \hline
@@ -406,13 +406,253 @@ end
     -0.1000&   -0.1000  &  8.7590  &  8.8156 \\ \hline
     -0.1000&    0.1000  &  8.0653  &  8.3189 \\ \hline
     0.1000 &        0   & 8.0323   & 8.2222 \\ \hline
-    0.1000 &  -0.1000    &8.3791   & 8.7064 \\ \hline
+    0.1000 &  -0.1000    & 8.3791   & 8.7064 \\ \hline
     0.1000 &   0.1000   & 7.6854   & 7.7515 \\ \hline
   \end{tabular}
 \end{center}
 We can see that $p^*_{pred} \le p^*_{exact}$ for all pertubations.
 
+\subsection*{5.2}
+The objective function $\underset{i=1,\dots,k}{\max}|f(t_i)-y_i|$ is not convex, however it is quasiconvex: $$\set{t,y,\alpha | \underset{i=1,\dots,k}{\max}|f(t_i)-y_i| \le \alpha}$$
+as it is a linear inequality.\\\\
 
+\begin{figure}[h]
+\centering
+\includegraphics[scale=.2]{52_1.jpg}
+\caption{Data and optimal function fit.}
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[scale=.30]{52_2.jpg}
+\caption{Error for the given t value.}
+\end{figure}
+
+To solve we can use the bisection method:\\ 
+\textbf{Code:}
+\begin{lstlisting}
+upper = exp(5);
+lower = 0;
+tolerance = .001
+k = 201
+t=(-3:6/(k-1):3)';
+y=exp(t);
+% 1 + t + t^2
+T=[ones(k,1) t t.^2];
+
+while upper - lower >= tolerance
+    midpoint = (lower + upper)/2
+    cvx_begin
+    % a_0, a_1, a_2
+    variable a(3)
+    % b_0, b_1
+    variable b(2)
+    subject to
+        abs(T*a-y.*(T*[1;b])) <= midpoint*T*[1;b]
+    cvx_end
+    if strcmp(cvx_status,'Solved')
+        a_star = a;
+        b_star = b;
+        upper = midpoint;
+        value = midpoint;
+    else
+        lower = midpoint       
+    end
+end
+
+y_star = T*a_star./(T*[1;b_star]);
+y_star
+a_star
+b_star
+
+figure(1);
+plot(t,y,'g', t,y_star,'r');
+xlabel('t');
+ylabel('y');
+
+figure(2);
+plot(t, y_star-y);
+xlabel('t');
+ylabel('err');
+\end{lstlisting}
+\textbf{Results:}\\
+a_star =\\
+    1.0099\\
+    0.6115\\
+    0.1133\\
+b\_star =\\
+   -0.4147\\
+    0.0485\\
+
+\subsection*{5.6}
+\textbf{Code:}
+\begin{lstlisting}
+% tv_img_interp.m
+% Total variation image interpolation.
+% Defines m, n, Uorig, Known.
+% Load original image.
+pwd()
+Uorig = double(imread('/home/carl/CUBoulder/coursework/5254/HW5/tv_img_interp.png'));
+[m, n] = size(Uorig);
+% Create 50% mask of known pixels.
+rand('state', 1029);
+Known = rand(m,n) > 0.5;
+%%%%% Put your solution code here
+% Calculate and define Ul2 and Utv.
+% Placeholder:
+cvx_begin
+variable Ul2(m, n);
+Ul2(Known) == Uorig(Known);
+Ux = Ul2(2:end,2:end) - Ul2(2:end,1:end-1);
+Uy = Ul2(2:end,2:end) - Ul2(1:end-1,2:end);
+% Squared / l2 norm
+minimize(norm([Ux(:); Uy(:)], 2)); 
+cvx_end
+cvx_begin
+variable Utv(m, n);
+Utv(Known) == Uorig(Known);
+Ux = Utv(2:end,2:end) - Utv(2:end,1:end-1);
+Uy = Utv(2:end,2:end) - Utv(1:end-1,2:end);
+% abs or l1 norm
+minimize(norm([Ux(:); Uy(:)], 1)); % tv roughness measure
+cvx_end
+%%%%%
+% Graph everything.
+figure(1); cla;
+colormap gray;
+subplot(221);
+imagesc(Uorig)
+title('Original image');
+axis image;
+subplot(222);
+imagesc(Known.*Uorig + 256-150*Known);
+title('Obscured image');
+axis image;
+subplot(223);
+imagesc(Ul2);
+title('l_2 reconstructed image');
+axis image;
+subplot(224);
+imagesc(Utv);
+title('Total variation reconstructed image');
+axis image;
+\end{lstlisting}
+\textbf{Results:}\\
+\begin{figure}[h]
+\centering
+\includegraphics[scale=.30]{interpolation.jpg}
+\caption{Interpolation results.}
+\end{figure}
+
+\subsection*{5.13}
+\subsubsection*{a)}
+We constrain the problem such that $c^Tx_i$ for all censored data points ($i=M+1,\dots,K$) must be greater than the lower bound $D$ while minimizing the uncensored data $i=1,\dots,M$.
+\begin{equation*}
+\begin{aligned}
+& \underset{c}{\text{minimize}}
+& & \sum_{i=1}^{M}(y_i-c^Tx_i)^2\\
+& \text{subject to}\
+& & c^Tx_i \ge D, \text{ for } i=M+1,\dots,K
+\end{aligned}
+\end{equation*}
+\subsubsection*{b)}
+\textbf{Code:}
+\begin{lstlisting}
+% data for censored fitting problem.
+randn('state',0);
+n = 20; % dimension of x's
+M = 25; % number of non-censored data points
+K = 100; % total number of points
+c_true = randn(n,1);
+X = randn(n,K);
+y = X'*c_true + 0.1*(sqrt(n))*randn(K,1);
+% Reorder measurements, then censor
+[y, sort_ind] = sort(y);
+sort_ind
+X = X(:,sort_ind);
+D = (y(M)+y(M+1))/2;
+y = y(1:M);
+X_uncen = X(:,1:M)
+X_cen = X(:,M+1:K)
+cvx_begin
+    variable c(n)
+    minimize(sum_square(y - X_uncen'*c))
+    subject to
+        X_cen'*c >= D
+cvx_end
+cvx_begin
+    variable c_ls(n)
+    minimize(sum_square(y - X_uncen'*c_ls))
+cvx_end
+
+norm(c - c_true, 2) / norm(c_true,2)
+
+norm(c_ls - c_true, 2) / norm(c_true,2)
+\end{lstlisting}
+\textbf{Results:}\\
+Errors:\\
+$\hat{c} = 0.1538$\\
+$c_{ls} = 0.3907$
+
+\subsection*{5.15}
+\subsubsection*{a)}
+We can optimize the following:
+\begin{equation*}
+\begin{aligned}
+& \underset{P}{\text{minimize}}
+& & \frac{1}{N}\sum_{i=1}^{N}(d_i - (x_i-y_i)^TP(x_i-y_i))^2\\
+& \text{subject to}\
+& & P \succeq 0
+\end{aligned}
+\end{equation*}
+Another approach would be to maxmize $i=1,\dots,M$ dissimilar points for the P-metric while keep $i=M+1,\dots,N$ similar points less then some arbitrarily small value $\alpha$:
+\begin{equation*}
+\begin{aligned}
+& \underset{P}{\text{maxmize}}
+& & \sum_{i=1}^{M}((x_i-y_i)^TP(x_i-y_i))^\frac{1}{2}\\
+& \text{subject to}\
+& & P \succeq 0\\
+& & & \sum_{i=M+1}^{N}(x_i-y_i)^TP(x_i-y_i) \le \alpha
+\end{aligned}
+\end{equation*}
+\subsubsection*{b)}
+\textbf{Code:}
+\begin{lstlisting}
+%% data for learning a quadratic metric
+% provides X, Y, d, X_test, Y_test, d_test
+rand('seed',0);
+randn('seed',0);
+n = 5; % dimension
+N = 100; % number of distance samples
+N_test = 10;
+X = randn(n,N);
+Y = randn(n,N);
+X_test = randn(n,N_test);
+Y_test = randn(n,N_test);
+P =randn(n,n);
+P = P*P'+eye(n);
+sqrtP = sqrtm(P);
+d = norms(sqrtP*(X-Y)); % exact distances
+d = pos(d+randn(1,N)); % add noise and make nonnegative
+d_test = norms(sqrtP*(X_test-Y_test));
+d_test = pos(d_test+randn(1,N_test));
+P
+alpha = 5;
+[d_test, sort_ind] = sort(d_test);
+X_test = X_test(:,sort_ind);
+Y_test = Y_test(:,sort_ind);
+diff = X_test-Y_test
+
+clear P sqrtP;
+cvx_begin
+    variable P(n,n)
+    minimize((1/N_test)*pow_pos(sum(d_test' - sqrt(diag(diff'*P*diff))),2)),
+    subject to
+    P>0
+cvx_end
+
+\end{lstlisting}
+\textbf{Result:}
+Mean Squared Error = +1.24901e-10
 
 % --------------------------------------------------------------
 %     You don't have to mess with anything below this line.
