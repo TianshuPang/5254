@@ -1,0 +1,93 @@
+% --------------------------------------------------------------
+% This is all preamble stuff that you don't have to worry about.
+% Head down to where it says "Start here"
+% --------------------------------------------------------------
+ 
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{braket}
+\usepackage{graphicx}
+\usepackage{calligra}
+\usepackage{calrsfs}
+\usepackage{subcaption}
+\usepackage{listings}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+ 
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+ 
+\begin{document}
+ 
+% --------------------------------------------------------------
+%                         Start here
+% --------------------------------------------------------------
+ 
+%\renewcommand{\qedsymbol}{\filledbox}
+ 
+\title{HW7}
+\author{Carl Mueller\\ %replace with your name
+CSCI 5254 - Convex Optimization} %if necessary, replace with your course title
+\maketitle
+
+\subsection*{8.16}
+Formulate the following asa CVX optimization problem:\\
+Find the rectangle
+$$R = \set{x \in \textbf{R}^n | l \preceq x \preceq u}$$
+of maximum volume enclosed in the polyhedron
+$$P = \set{x | Ax \preceq b}$$\\
+The volume can be expressed as:
+\begin{proposition}{1}
+\begin{align}
+v = \prod_{i=1}^{n}u_i-l_i
+\end{align}
+\end{proposition}
+We want all the $2^n$ corners do be contained within the polyhedron. This every corner must meet the polyhedron constraint $Ac \preceq b$. Where $c$ is the vector of corners. Each of these corners can be be more succinctly represented as the vector based on the upper and lower values of each edge:\\ 
+If we express $x_i$ as $u_i-l_i$ then this system becomes
+$$\sum_{i=1}^{n}a_{ij}(u_j-l_j) \le b_i$$\\
+The problem can be expressed as:
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{minimize}}
+& & \prod_{i=1}^{n}u_i-l_i\\
+& \text{subject to}\
+& &\sum_{i=1}^{n}a_{ij}(u_j-l_j) \le b_i
+\end{aligned}
+\end{equation*}
+The constraint is a posynomial as it is a summation of the monomial $a_{ij}(u_j-l_j)$.\\
+To make the problem a non-linear geometric optimization problem, we take the log of the objective:
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{minimize}}
+& & \sum_{i=1}^{n}log(u_i-l_i)\\
+& \text{subject to}\
+& &\sum_{i=1}^{n}a_{ij}(u_j-l_j) \le b_i
+\end{aligned}
+\end{equation*}
+
+\subsection*{8.24}
+
+\begin{equation*}
+\begin{aligned}
+(a+u)^Tx_i \ge b\\
+a^Tx_i+u^Tx_i \ge b
+\end{aligned}
+\end{equation*}
+
+% --------------------------------------------------------------
+%     You don't have to mess with anything below this line.
+% --------------------------------------------------------------
+ 
+\end{document}
