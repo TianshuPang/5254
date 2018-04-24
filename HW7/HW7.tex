@@ -78,13 +78,79 @@ To make the problem a non-linear geometric optimization problem, we take the log
 \end{equation*}
 
 \subsection*{8.24}
-
+We make use of the Cauchy-Schwarz inequality and sustite $p$ knowing that $||u||_2 \le p$:
+\begin{proposition}{1}
+\begin{align}
+u^tx_i \le ||u||_2|x_i||_2\\
+||u||_2||x_i||_2 \le p||x_i||_2\\
+u^ty_j \le ||u||_2|y_j||_2\\
+||u||_2|y_j||_2 \le p||y_j||_2\\
+-||u||_2||y_j||_2 \ge -p||y_j||_2\\
+\end{align}
+\end{proposition}
+For $x_i$:
 \begin{equation*}
 \begin{aligned}
 (a+u)^Tx_i \ge b\\
-a^Tx_i+u^Tx_i \ge b
+a^Tx_i+u^Tx_i \ge b\\
+a^Tx_i+||u||_2|x_i||_2 \ge b\\
+a^Tx_i+p|x_i||_2 \ge b\\
+a^Tx_i-b \ge -p|x_i||_2
 \end{aligned}
 \end{equation*}
+For $x_i$:
+\begin{equation*}
+\begin{aligned}
+(a+u)^Ty_j \le b\\
+a^Ty_j+u^Ty_j \le b\\
+a^Ty_j+||u||_2||y_j||_2 \le b\\
+a^Ty_j+p||x_i||_2 \le b\\
+a^Ty_j-b \le -p||y_j||_2\\
+b-a^Ty_j \ge p||y_j||_2
+\end{aligned}
+\end{equation*}
+The optimization problem:
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{minimize}}
+& & p\\
+& \text{subject to}\
+& & b-a^Ty_j \ge p||y_j||_2\\
+&&& a^Tx_i-b \ge -p|x_i||_2\\
+&&& ||a||_2 \le 1
+\end{aligned}
+\end{equation*}\\
+\textbf{Additional Exercises:}\\
+\subsection*{5.12}
+One heurisitc is to treat P as noise.
+
+\subsection*{5.18}
+We can reformulate the problem as the original object being less than or equal to some value $z$:
+\begin{equation*}
+\begin{aligned}
+1+max_{k\neq y_i} f_k(x_i)  - f_{y_i} (x_i) \leq z_i,  z_i\geq 0\\
+\end{aligned}
+\end{equation*}\\
+This can be represented by the following problem:
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{minimize}}
+& &  \sum_i z_i + \mu ||A||_F^2\\
+& \text{subject to}\
+& & 1+max_{k\neq y_i} f_k(x_i) - f_{y_i} (x_i) \leq z_i, \forall i\\
+&&&  1^T b= 0,   z \geq 0\\
+\end{aligned}
+\end{equation*}\\
+This can be reexpressed using the individual inequality constraints:
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{minimize}}
+& &  \sum_i z_i + \mu ||A||_F^2\\
+& \text{subject to}\
+& &  1^T b= 0,   z \geq 0\\
+&&&  1+a_k^Tx_i + b  - y_i \leq z_i,    k = 1, 2, …,  y_i -1, y_i +1, …, K, i=1, 2, …, m
+\end{aligned}
+\end{equation*}\\
 
 % --------------------------------------------------------------
 %     You don't have to mess with anything below this line.
