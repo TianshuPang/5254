@@ -53,7 +53,5 @@ cvx_begin
     variable x_eye(n,1)
     minimize(norm(A*x_eye-P_eye'*y, 2))
 cvx_end;
-"Distance x (P=I) and estimated x:"
+"Distance x_e
 norm(x_eye - x, 2)
-"Distance x_true and estimated x:"
-norm(x_true - x, 2)

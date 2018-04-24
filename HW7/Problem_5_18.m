@@ -23,10 +23,10 @@ lo = 10^(-2)
 U = [];
 E = [];
 
-ypred = round(max(A_true*xtest + b_true))
-A_true*xtest + b_true * ones(1, 100)
-ytest
-
+% ypred = round(max(A_true*xtest + b_true))
+% A_true*xtest + b_true * ones(1, 100)
+% ytest
+% 
 % ypred(99);
 % ytest(99);
 % correct = 0
@@ -38,33 +38,34 @@ ytest
 %         correct = correct + 1
 %     end      
 % end
-
-100*correct/100
-% for s = 1:10
-%     u = (up-lo).*rand(1) + lo;
-%     U = [U ; u]
-%     cvx_begin
-%         variable z(mTrain)
-%         variable A(K, n)
-%         variable b(K, 1)
-%         minimize(sum(z) + u*square_pos(norm(A,'fro')))
-%         subject to
-%         for k = 1:K
-%             for i = 1:mTrain
-%                 1+A(k,:)*x(:, i)+b(k,:)-y(:, i) <= z(i,:)
-%             end
-%         end
-%         1'*b == 0
-%         z >= 0
-%     cvx_end
-%     ypred = round(max(A*xtest + b))
-%     total = length(ytest)
-%     correct = 0
-%     for i = 1:total
-%         if ypred(:,i) == ytest(:,i)
-%             correct = correct + 1
-%         end      
-%     end
-%     percent_correct = correct/total
-%     E = [E ; percent_correct]    
-% end
+% 
+% 100*correct/100
+for s = 1:10
+    u = (up-lo).*rand(1) + lo;
+    U = [U ; u]
+    cvx_begin
+        variable z(mTrain)
+        variable A(K, n)
+        variable b(K, 1)
+        minimize(sum(z) + u*square_pos(norm(A,'fro')))
+        subject to
+        for k = 1:K
+            for i = 1:mTrain
+                1+A(k,:)*x(:, i)+b(k,:)-y(:, i) <= z(i,:)
+            end
+        end
+        1'*b == 0
+        z >= 0
+    cvx_end
+    ypred = round(max(A*xtest + b*ones(1, mTest)))
+    total = mTest
+    correct = 0
+    for i = 1:total
+        if ypred(i) == ytest(i)
+            correct = correct + 1
+        end      
+    end
+    percent_correct = correct/total
+    E = [E ; percent_correct]    
+end
+plot(U,E)
