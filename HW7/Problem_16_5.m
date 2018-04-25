@@ -25,3 +25,30 @@ end
 hold off;
 xlabel('time t');
 ylabel('job i');
+
+
+
+cvx_begin
+    variable X(T,n)
+    s = sum(X');
+    minimize(sum(alpha+beta*s+gamma*square(s)))
+    subject to
+        X >= 0;
+        Smin <= s <= Smax;
+        abs(s(2:end)-s(1:end-1))<=R; % slew rate constraint
+        % Timing constraints for each job
+        for i=1:n
+            for t=1:A(i)-1
+                X(t,i)==0;
+            end
+            for t=D(i)+1:T
+                X(t,i)==0;
+            end
+        end
+        sum(X)>=W';
+cvx_end
+theta = X./(s'*ones(1,n));
+figure;
+bar((s'*ones(1,n)).*theta,1,'stacked');
+xlabel('Time: tt');
+ylabel('Stacked speed: s_t');

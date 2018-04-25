@@ -306,10 +306,124 @@ ans = 108\\
 ans = 500\\
 
 \subsection*{16.5}
-See solution.
+We begin by stating that $X = \theta s$. The optmization problem can be formulated as: 
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{minimize}}
+& & \sum_{t=1}^{T}\phi(s_t) \\
+& \text{subject to}\
+& & S_{min} \preceq s \preceq S_{max}\\
+&&& |s_{t+1}-s_t| \le R\\
+&&& s = X1, X^T1 \succeq W, X \succeq 0\\
+&&& X_{ti} = 0, t = 1,\dots, A_i-1, 1=i,\dots,n\\
+&&& X_{ti} = 0, t = D_i+1,\dots, T, 1=i,\dots,n\\
+\end{aligned}
+\end{equation*}\\
+The top two constraitns are the processor speed limits and slew rates. Each row coefficients $\theta_{ti}$ for $1=1,\dots,n$ must sum to one therefore $X1=s$. The last two constraints express that each component of  $X_{ti}$ is 0 for any values outside the range $[A_i,D_i]$ for the given job $i.$
+\textbf{Code:}\\
+\begin{lstlisting}
+cvx_begin
+    variable X(T,n)
+    s = sum(X');
+    minimize(sum(alpha+beta*s+gamma*square(s)))
+    subject to
+        X >= 0;
+        Smin <= s <= Smax;
+        abs(s(2:end)-s(1:end-1))<=R; % slew rate constraint
+        % Timing constraints for each job
+        for i=1:n
+            for t=1:A(i)-1
+                X(t,i)==0;
+            end
+            for t=D(i)+1:T
+                X(t,i)==0;
+            end
+        end
+        sum(X)>=W';
+cvx_end
+theta = X./(s'*ones(1,n));
+figure;
+bar((s'*ones(1,n)).*theta,1,'stacked');
+xlabel('Time: tt');
+ylabel('Stacked speed: s_t');
+\end{lstlisting}
+\textbf{Results:}\\
+\begin{figure}[h]
+\centering
+\includegraphics[scale=.25]{Problem_16_5_1.jpg}
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[scale=.25]{Problem_16_5_2.jpg}
+\caption{Stacked processor speed, each stack representing portion of speed devoted to allocated jobs.}
+\end{figure}
 
 \subsection*{17.4}
+We must maximize the net revenue minus the penalty to maximize the net profit:
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{maximize}}
+& & trace(R^TN) - p^Ts\\
+& \text{subject to}\
+& & s = q - A^TNT\\
+&&& N \succeq 0\\
+&&& \sum_{t=1}^{T}N_{it} = I_{i}
+\end{aligned}
+\end{equation*}\\
+\textbf{Code:}\\
+\begin{lstlisting}
+cvx_begin
+    variable N(n,T)
+    % we need s positive to ensure no negative penalties.
+    s =pos(q-diag(Acontr'*N*Tcontr))
+    maximize(sum(diag(R'*N())) - p'*s)
+    subject to
+        N >= 0;
+        sum(N)== I';
+cvx_end
+
+net_profit = cvx_optval
+revenue = sum(diag(R'*N))
+payment = p'*s
+
+% Highest ad revenue %
+cvx_begin
+    variable N(n,T)
+    maximize (sum(diag(R'*N)))
+    subject to
+        N >= 0;
+        ones(1,n)*N == I';
+cvx_end
+hi_ad_revenue = cvx_optval;
+s = pos(q-diag(Acontr'*N*Tcontr))
+hi_ad_payment = p'*s
+hi_ad_net_profit = hi_ad_revenue-hi_ad_payment
+\end{lstlisting}
+\textbf{Results:}\\
+Full ad porfolio:\\
+net\_profit = 230.5660\\
+revenue = 268.2319\\
+payment = 37.6659\\\\
+Highest earning ad portfolio:\\
+hi\_ad\_revenue = 305.1017 \\
+hi\_ad\_payment = 232.2602 \\
+hi\_ad\_net\_profit = 72.8415 \\
+
 \subsection*{17.5}
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{maximize}}
+& & \\
+& \text{subject to}\
+& & 
+\end{aligned}
+\end{equation*}\\
+\textbf{Code:}\\
+\begin{lstlisting}
+
+\end{lstlisting}
+\textbf{Results:}\\
+
 \subsection*{17.8}
 \subsection*{17.9}
 % --------------------------------------------------------------
