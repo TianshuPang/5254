@@ -18,10 +18,11 @@ y=P*y_true;
 
 above_tol = 1
 tolerance = .00000001
+% Seed our initial estimate of x using huber function
 cvx_begin
 variable x(n);
     minimize( sum(huber(A*x-y)) );
-    cvx_end
+cvx_end
 P_hat = eye(m)
 x_prior = zeros(n)
 while 1
@@ -60,7 +61,7 @@ cvx_begin
     variable x_eye(n,1)
     minimize(norm(A*x_eye-P_eye'*y, 2))
 cvx_end;
-"Distance x (P=I) and estimated x:"
+"Distance estimated x (P=I) and x_true:"
 norm(x_eye - x_true, 2)
 "Distance x_true and estimated x:"
 norm(x_true - x, 2)

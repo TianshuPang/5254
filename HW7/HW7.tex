@@ -123,9 +123,63 @@ The optimization problem:
 \textbf{Additional Exercises:}\\
 \subsection*{5.12}
 One heurisitc estiamte an initial $\hat{x}$ using the huber penalty function. We then use that $\hat{x}$ to estimate a $\hat{P}$ by aligning the indices of $Ax$ and $y$ to find a permutation matrix. Then using that same permutation we reoptimized for $\hat{x}$. We repeat this algorithm until the euclidean norm of the distance between the $\hat{x}_{\tau}$ and $\hat{x}_{\tau-1}$ is below some tolerance, $\tau$ being the current iteration step.
-
-TODO CODE CODE AND EVALUATION
-
+\textbf{Code:}\\
+\begin{lstlisting}
+above_tol = 1
+tolerance = .00000001
+% Seed our initial estimate of x using huber function
+cvx_begin
+variable x(n);
+    minimize( sum(huber(A*x-y)) );
+cvx_end
+P_hat = eye(m)
+x_prior = zeros(n)
+while 1
+    
+    % Align the smallest indixes, find pi (the permutation index alignement) 
+    % and construct the permutation matrix P_hat accordingly:
+    [Ax_values, Ax_idx] = sort(A*x);
+    [y_values, y_idx] = sort(y);
+    pi = [y_idx' ; Ax_idx'];
+    P_temp = zeros(m, m);
+    for i = 1 : m
+       row = pi(1,i);
+       col = pi(2,i);
+       P_temp(row, col) = 1;
+    end
+    P_hat = P_temp;
+    if P_hat*P_hat' ~= eye(m)
+        "Invalid P_hat!"
+        break
+    end
+    "Distance:"
+    dist = norm(x - x_prior, 2)
+    if dist <= tolerance
+        break
+    end
+    x_prior = x;
+    
+    % Find x_hat
+    cvx_begin
+        variable x(n,1)
+        minimize(norm(A*x-P_hat'*y, 2))
+    cvx_end;
+end
+P_eye = eye(m);
+cvx_begin
+    variable x_eye(n,1)
+    minimize(norm(A*x_eye-P_eye'*y, 2))
+cvx_end;
+"Distance x (P=I) and estimated x:"
+norm(x_eye - x_true, 2)
+"Distance x_true and estimated x:"
+norm(x_true - x, 2)
+\end{lstlisting}
+\textbf{Results:}\\
+"Distance estimated x (P=I) and x\_true:"\\
+ans = 3.4363\\
+"Distance x\_true and estimated x:"\\
+ans = 0.0965\\
 \subsection*{5.18}
 We can reformulate the problem as the original object being less than or equal to some value $z$:
 \begin{equation*}
