@@ -23,9 +23,11 @@ lo = 10^(-2)
 U = [];
 E = [];
 
+for i = 1:
+
 U = [0.01 0.05 0.1 0.2 0.5 1 2 5 10 20 50 75 100]
 % This loop generates a new u value. 
-for u = 1:size(U,2)
+for u = 1:size(U)
     cvx_begin
         variable z(mTrain, 1)
         variable A(K, n)

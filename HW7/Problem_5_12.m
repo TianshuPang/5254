@@ -15,45 +15,52 @@ P=eye(m);P(perm_idxs,:)=P(new_pos,:);
 perm_idxs(find(perm_idxs==new_pos))=[];
 y=P*y_true;
 
-above_tol = 1
-tolerance = .000001
-x_prior = zeros(n,1)
 
+above_tol = 1
+tolerance = .00000001
+cvx_begin
+variable x(n);
+    minimize( sum(huber(A*x-y)) );
+    cvx_end
+P_hat = eye(m)
+x_prior = zeros(n)
 while 1
-    % Find x_hat
-    cvx_begin
-        variable x(n,1)
-        minimize(norm(A*x-P'*y, 2))
-    cvx_end;
+    
     % Align the smallest indixes, find pi (the permutation index alignement) 
     % and construct the permutation matrix P_hat accordingly:
     [Ax_values, Ax_idx] = sort(A*x);
     [y_values, y_idx] = sort(y);
     pi = [y_idx' ; Ax_idx'];
-    P_hat = zeros(m, m);
+    P_temp = zeros(m, m);
     for i = 1 : m
        row = pi(1,i);
        col = pi(2,i);
-       P_hat(row, col) = 1;
+       P_temp(row, col) = 1;
     end
-    P = P_hat;
-    if P*P' ~= eye(m)
-        "Incorrect P!"
+    P_hat = P_temp;
+    if P_hat*P_hat' ~= eye(m)
+        "Invalid P_hat!"
         break
     end
-    x == x_prior
+    "Distance:"
     dist = norm(x - x_prior, 2)
     if dist <= tolerance
         break
     end
     x_prior = x;
+    
+    % Find x_hat
+    cvx_begin
+        variable x(n,1)
+        minimize(norm(A*x-P_hat'*y, 2))
+    cvx_end;
 end
-P_eye = eye(m)
+P_eye = eye(m);
 cvx_begin
     variable x_eye(n,1)
     minimize(norm(A*x_eye-P_eye'*y, 2))
 cvx_end;
 "Distance x (P=I) and estimated x:"
-norm(x_eye - x, 2)
+norm(x_eye - x_true, 2)
 "Distance x_true and estimated x:"
 norm(x_true - x, 2)
