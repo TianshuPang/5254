@@ -15,20 +15,21 @@ rbar = mu_rf + SR*sqrt(diag(Sigma)); % expected return
 c = 5 + exp(2*randn(n,1)); % market capitalization (index weights)
 
 
-z = c'*rbar % index using market capitalization and expected returns
-sqrt(mean(z^2))
-size(z)
-size(c)
-size(rbar)
+ctc = mtimes(c', c);
+rbarsq = dot(rbar, rbar');
+zsqr = (ctc * rbarsq)
 
 
 cvx_begin
-    variable w(n,1)
-    minimize(norm(w,1))
-    subject to
-       w'*c >= .9
+  variable w(n)
+  minimize norm(w,1)
+  E_num = ( (rbar' * (c * c') * rbar)) + c'*diag(Sigma) + (w' * (Sigma + (rbar * rbar')) * w) - 2 * w' *(Sigma + (rbar * rbar')) * c ;
+  subject to
+      E_num <= 0.01 * (ctc * rbarsq);
+      w <= c;
 cvx_end
-w
-c
-sqrt((z-w'*rbar)^2/z^2)
+
+E_num/(ctc * rbarsq)
+sum(abs(w > 0.01))
+sum(abs(c > 0.01))
 

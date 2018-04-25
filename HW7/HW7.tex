@@ -153,13 +153,111 @@ This can be reexpressed using the individual inequality constraints:
 &&&  1+a_k^Tx_i + b  - y_i \leq z_i,    k = 1, 2, …,  y_i -1, y_i +1, …, K, i=1, 2, …, m
 \end{aligned}
 \end{equation*}\\
-\begin{figure}[t]
+\begin{figure}[h]
 \includegraphics[scale=.25]{Problem_5_18.jpg}
 \end{figure}
-TODO CODE CODE AND EVALUATION
+\textbf{Code:}\\
+\begin{lstlisting}
+E = [];
+U = [0.01 0.05 0.1 0.2 0.5 1 2 5 10 20 50 75 100]
+% This loop generates a new u value. 
+for u = 1:size(U,2)
+    cvx_begin
+        variable z(mTrain, 1)
+        variable A(K, n)
+        variable b(K, 1)
+        minimize(sum(z) + U(u)*square_pos(norm(A,'fro')))
+        subject to
+        for i=1:mTrain
+            for k=[1:y(i)-1 y(i)+1:K]
+                1+(A(k,:)*x(:,i)+b(k))-(A(y(i),:)*x(:,i)+b(y(i))) <= z(i);
+            end
+            z(i) >= 0;
+        end
+        sum(b) == 0;
+    cvx_end
+    % Compute the predict predicted labels by computing the affine function
+    % on xtest using the estimated optial A and b. Find the max in each
+    % column (i.e. argmax for label) and round to get whole number value.
+    correct = 0
+    y_pred = zeros(1,mTest);
+
+    for i=1:mTest
+        [~, y_pred(i)] = max(A*xtest(:,i) + b);
+        if (y_pred(i) == ytest(i))
+            correct = correct + 1;
+        end
+    end
+    percent_correct = correct/mTest
+    E = [E ; percent_correct]    
+end
+plot(U,E)
+\end{lstlisting}
+
 
 \subsection*{13.15}
-$$\min_{x\in\mathcal X} \mathbb{E} (\alpha x^2 + \norm(x-\beta)^2)$$
+One heurisitic is to ensure that the 1-norm of $w$ is minimized. We can then formulate and optimization problem subject to the following constraint:
+\begin{proposition}{1}
+\begin{align}
+E[(r-\bar{r})((r-\bar{r})] = \Sigma\\
+E[rr^T] - \bar{r}\bar{r}^T = \Sigma\\
+E[rr^T] = \Sigma + \bar{r}\bar{r}^T
+\end{align}
+\end{proposition}
+\begin{proposition}{2}
+\begin{align}
+E[z^Tz] = c^Tdiag(\Sigma) + \bar{r}^Tcc^T\bar{r}
+\end{align}
+\end{proposition}
+\begin{equation*}
+\begin{aligned}
+E[(z-w^Tr)(z-w^Tr)] \le .01E[z^2]\\
+E[z^Tz + r^Tww^Tr - 2zw^Tr ] \le .01E[z^2]\\
+E[z^Tz] + E[r^Tww^Tr] - 2E[zw^Tr] \le .01E[z^2]\\
+E[z^Tz] + E[r^Tww^Tr] - 2E[zw^Tr] \le .01E[z^2]\\
+E[z^Tz] + E[w^Trr^Tw] - 2E[(c^Tr)^Tw^Tr] \le .01E[z^2]\\
+c^Tdiag(\Sigma) + \bar{r}^Tcc^T\bar{r} + w^T(\Sigma + \bar{r}\bar{r}^T)w - 2E[(c^Tr)^Tw^Tr] \le .01E[z^2]\\
+c^Tdiag(\Sigma) + \bar{r}^Tcc^T\bar{r} + w^T(\Sigma + \bar{r}\bar{r}^T)w - 2w^T(\Sigma + \bar{r}\bar{r}^T)c \le .01E[z^2]\\
+\end{aligned}
+\end{equation*}\\
+This becomes the optimization problem reflected in the matlab code:
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{minimize}}
+& &  ||w||_1\\
+& \text{subject to}\
+& & c^Tdiag(\Sigma) + \bar{r}^Tcc^T\bar{r} + w^T(\Sigma + \bar{r}\bar{r}^T)w - 2w^T(\Sigma + \bar{r}\bar{r}^T)c \le .01E[z^2]\\
+\end{aligned}
+\end{equation*}\\
+\textbf{Code:}\\
+\begin{lstlisting}
+ctc = mtimes(c', c);
+rbarsq = dot(rbar, rbar');
+zsqr = (ctc * rbarsq)
+cvx_begin
+  variable w(n)
+  minimize norm(w,1)
+  E_num = ( (rbar' * (c * c') * rbar)) + c'*diag(Sigma) + (w' * (Sigma + (rbar * rbar')) * w) - 2 * w' *(Sigma + (rbar * rbar')) * c ;
+  subject to
+      E_num <= 0.01 * (ctc * rbarsq);
+      w <= c;
+cvx_end
+E_num/(ctc * rbarsq)
+sum(abs(w > 0.01))
+sum(abs(c > 0.01))
+\end{lstlisting}
+\textbf{Results:}\\
+ans = 0.0100\\
+ans = 108\\
+ans = 500\\
+
+\subsection*{16.5}
+See solution.
+
+\subsection*{17.4}
+\subsection*{17.5}
+\subsection*{17.8}
+\subsection*{17.9}
 % --------------------------------------------------------------
 %     You don't have to mess with anything below this line.
 % --------------------------------------------------------------
