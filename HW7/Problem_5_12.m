@@ -14,16 +14,14 @@ new_pos=perm_idxs(randperm(k));
 P=eye(m);P(perm_idxs,:)=P(new_pos,:);
 perm_idxs(find(perm_idxs==new_pos))=[];
 y=P*y_true;
+P_true = P
 
-
-above_tol = 1
-tolerance = .00000001
+tolerance = .00000000001
 % Seed our initial estimate of x using huber function
 cvx_begin
 variable x(n);
     minimize( sum(huber(A*x-y)) );
 cvx_end
-P_hat = eye(m)
 x_prior = zeros(n)
 while 1
     
@@ -65,3 +63,11 @@ cvx_end;
 norm(x_eye - x_true, 2)
 "Distance x_true and estimated x:"
 norm(x_true - x, 2)
+
+miss_count = 0;
+for i=1:size(A,1)
+    if sum(P_true(i,:) ~= P_hat(i,:)) ~= 0
+        miss_count = miss_count + 1;
+    end
+end
+miss_count

@@ -122,17 +122,15 @@ The optimization problem:
 \end{equation*}\\
 \textbf{Additional Exercises:}\\
 \subsection*{5.12}
-One heurisitc estiamte an initial $\hat{x}$ using the huber penalty function. We then use that $\hat{x}$ to estimate a $\hat{P}$ by aligning the indices of $Ax$ and $y$ to find a permutation matrix. Then using that same permutation we reoptimized for $\hat{x}$. We repeat this algorithm until the euclidean norm of the distance between the $\hat{x}_{\tau}$ and $\hat{x}_{\tau-1}$ is below some tolerance, $\tau$ being the current iteration step.
-\textbf{Code:}\\
+One heurisitc estiamte an initial $\hat{x}$ using the huber penalty function. We then use that $\hat{x}$ to estimate a $\hat{P}$ by aligning the indices of $Ax$ and $y$ to find a permutation matrix. Then using that same permutation we reoptimized for $\hat{x}$. We repeat this algorithm until the euclidean norm of the distance between the $\hat{x}_{\tau}$ and $\hat{x}_{\tau-1}$ is below some tolerance, $\tau$ being the current iteration step.\\\\
+\textbf{Code:}
 \begin{lstlisting}
-above_tol = 1
-tolerance = .00000001
+tolerance = .00000000001
 % Seed our initial estimate of x using huber function
 cvx_begin
 variable x(n);
     minimize( sum(huber(A*x-y)) );
 cvx_end
-P_hat = eye(m)
 x_prior = zeros(n)
 while 1
     
@@ -170,16 +168,29 @@ cvx_begin
     variable x_eye(n,1)
     minimize(norm(A*x_eye-P_eye'*y, 2))
 cvx_end;
-"Distance x (P=I) and estimated x:"
+"Distance estimated x (P=I) and x_true:"
 norm(x_eye - x_true, 2)
 "Distance x_true and estimated x:"
 norm(x_true - x, 2)
+
+miss_count = 0;
+for i=1:size(A,1)
+    if sum(P_true(i,:) ~= P_hat(i,:)) ~= 0
+        miss_count = miss_count + 1;
+    end
+end
+miss_count
 \end{lstlisting}
+\begin{verbatim}
 \textbf{Results:}\\
-"Distance estimated x (P=I) and x\_true:"\\
-ans = 3.4363\\
-"Distance x\_true and estimated x:"\\
-ans = 0.0965\\
+Optimal value (cvx_optval): +441.802
+"Distance estimated x (P=I) and x_true:"
+ans = 3.4363
+"Distance x_true and estimated x:"
+ans = 0.0965
+"Numer of mismatched rows in P_true vs P_hat:"
+miss_count = 47
+\end{verbatim}
 \subsection*{5.18}
 We can reformulate the problem as the original object being less than or equal to some value $z$:
 \begin{equation*}
@@ -207,8 +218,10 @@ This can be reexpressed using the individual inequality constraints:
 &&&  1+a_k^Tx_i + b  - y_i \leq z_i,    k = 1, 2, …,  y_i -1, y_i +1, …, K, i=1, 2, …, m
 \end{aligned}
 \end{equation*}\\
-\begin{figure}[h]
+\begin{figure}[t]
+\centering
 \includegraphics[scale=.25]{Problem_5_18.jpg}
+\caption{U-values vs percent correct.}
 \end{figure}
 \textbf{Code:}\\
 \begin{lstlisting}
@@ -478,7 +491,97 @@ sum(V>0.001) = 900
 \end{figure}
 
 \subsection*{17.8}
+\subsubsection*{a)}
+Assume we have $P_1 = 10$ and $P_2 = 10$ where $K = 1,2$. Let there be 2 positions and $w_1 = [1,0]$ and $w_2 = [0,1]$ and all $v=0$ For quasiconcavity to hold, we need the following set to be concave $\set{x|V(x) \ge \alpha}$. If we can find an example of a series of x in our domain that violates this then we've shows that the function violates the requiremenets for quasi convexity.
+$$x_1 = [1,0], x_2=[0,1], x_3=[-1,0], x_4=[0,-1]$$
+$$V(x_1) = 10*\frac{1}{1+e^{-[1,0]^T[1,0]}} + 10*\frac{1}{1+e^{-[0,1]^T[1,0]}} \approx 2.6 + 5 = 7.6$$
+$$V(x_1) = 10*\frac{1}{1+e^{-[1,0]^T[0,1]}} + 10*\frac{1}{1+e^{-[0,1]^T[0,1]}}  \approx  2.6 + 5 = 7.6$$ 
+$$V(x_1) = 10*\frac{1}{1+e^{-[1,0]^T[-1,0]}} + 10*\frac{1}{1+e^{-[0,1]^T[-1,0]}}  \approx  7.6 + 5 = 13.6$$ 
+$$V(x_1) = 10*\frac{1}{1+e^{-[1,0]^T[-1,0]}} + 10*\frac{1}{1+e^{-[0,1]^T[0,-1]}}  \approx  7.6 + 5 = 13.6$$ 
+
+We can choose an choose an $\alpha = 10$ where despite all x being in some domain, the quasiconcavity set is violated.
+
+\subsubsection*{b)}
+By restricting the above example with the constraint that $w_k^Tx + v_k$, we ensure that each f is correctly refelcts political view w with with respect to the positions on X i.e. increases in position track the actual preferences of the voters. This means that for a given domain, there is an optimal.
+
+\subsubsection*{c)}
+\textbf{Code:}\\
+\begin{lstlisting}
+cvx_begin
+variable x(n)
+maximize(P'*gapx(W*x+v))
+subject to
+    W*x+v >= 0
+    l <= x <= u
+    l < 0
+    u > 0
+cvx_end
+\end{lstlisting}
+\textbf{Results:}
+\begin{verbatim}
+Increase in votes: +435580
+ Political Position:
+x = [1.0000, 1.0000, 0.1758, -0.5572, -1.0000]
+\end{verbatim}
+
 \subsection*{17.9}
+The max function is a convex function, thus the objective is a linear comibnation of convex function which is itself convex.
+\subsubsection*{a)}
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{minimize}}
+& & \sum_{j=1}^{J}w_j(t_j^{tar}-t+j)_+\\
+& \text{subject to}\
+& & \sum_{p=1}^{P}x_p \preceq x^{tot}\\
+&&& l^{job} \preceq l^{max}\\
+\end{aligned}
+\end{equation*}\\
+\subsubsection*{b)}
+\textbf{Code:}\\
+\begin{lstlisting}
+cvx_begin
+variable t(J)
+variable x(n,P)
+minimize(sum(w'*max(t_tar-t, zeros(J,1))))
+subject to
+    t_tar-t >= zeros(J,1)
+    t >= 0
+    x >= x_min
+    R'*(pow_p(diag(A'*x) - R*t, -1)) <= l_max;
+    size(R*t)
+    diag(A'*x) > R*t;
+    sum(x,2) <= x_tot
+cvx_end
+t
+t_tar
+\end{lstlisting}
+\textbf{Results:}
+\begin{verbatim}
+Optimal value (cvx_optval): +7.74196
+
+t =
+    9.0300
+    8.5631
+    6.8426
+    1.6032
+    6.3854
+    9.9212
+    9.3040
+    5.9270
+    2.0905
+    2.8096
+
+t_tar =
+    9.0300
+    8.5631
+    6.8426
+    8.6306
+    6.3854
+    9.9212
+    9.3040
+    5.9270
+    2.0905
+\end{verbatim}
 % --------------------------------------------------------------
 %     You don't have to mess with anything below this line.
 % --------------------------------------------------------------

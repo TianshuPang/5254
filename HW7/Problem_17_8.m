@@ -17,3 +17,15 @@ gapxi = @(z,i) g(i)+gp(i)*(z-i);
 % concave approximation to logistic function (upper bound when z >= 0) at point i
 gapx = @(z) min(min(min(min(min(1,gapxi(z,0)),gapxi(z,1)),gapxi(z,2)),gapxi(z,3)),gapxi(z,4));
 % concave approximation to logistic function (upper bound when z >= 0)
+
+cvx_begin
+variable x(n)
+maximize(P'*gapx(W*x+v))
+subject to
+    W*x+v >= 0
+    l <= x <= u
+    l < 0
+    u > 0
+cvx_end
+
+x
