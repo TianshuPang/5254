@@ -410,19 +410,72 @@ hi\_ad\_payment = 232.2602 \\
 hi\_ad\_net\_profit = 72.8415 \\
 
 \subsection*{17.5}
+For the first condition: $\phi(v) = v^2$ which will penalize higher values.
+For the second condition: $\phi(v) = huber(v)$ which is less sensitive to outliers and thus will allow a few large preference violations.
+The minimization problem for the squared error becomes becomes: 
 \begin{equation*}
 \begin{aligned}
-& \underset{}{\text{maximize}}
-& & \\
+& \underset{}{\text{minimize}}
+& & \sum\phi(V)\\
 & \text{subject to}\
-& & 
+& & V = max(r_j + 1 - r_i, 0)
+\end{aligned}
+\end{equation*}\\
+For the huber penalty function, since CVX requires huber be passed an affine function, we must reformulate:
+\begin{equation*}
+\begin{aligned}
+& \underset{}{\text{minimize}}
+& & \sum\phi(V)\\
+& \text{subject to}\
+& & r_j + 1 - r_i, 0 \ge 0
 \end{aligned}
 \end{equation*}\\
 \textbf{Code:}\\
 \begin{lstlisting}
+cvx_begin
+variable R(50)
+V = max(R(preferences(:,2))+1-R(preferences(:,1)),0)
+minimize(sum(square_phi(V)))
+cvx_end
+sum(V>0.001)
+histogram(V)
+
+cvx_begin
+variable R(50)
+V = R(preferences(:,2))+1-R(preferences(:,1))
+minimize(sum(huber_phi(V)))
+subject to
+    R(preferences(:,2))+1-R(preferences(:,1)) >= 0
+cvx_end
+sum(V>0.001)
+histogram(V)
+
+function square_penalty = square_phi( x )
+square_penalty = pow_pos(x, 2)
+end
+
+function huber_penalty = huber_phi( x )
+huber_penalty = huber(x)
+end
 
 \end{lstlisting}
 \textbf{Results:}\\
+Squared penalty:\\
+sum(V>0.001) = 781\\
+Huber Penalty:\\
+sum(V>0.001) = 900
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=.25]{histogram_square_penalty.jpg}
+\caption{Histogram for square penalty.}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=.25]{histogram_huber_penalty.jpg}
+\caption{Histogram for huber penalty.}
+\end{figure}
 
 \subsection*{17.8}
 \subsection*{17.9}

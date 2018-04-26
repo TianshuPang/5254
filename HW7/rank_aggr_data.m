@@ -39,7 +39,7 @@
 % 
 % %scramble measurements
 % preferences=preferences(randperm(numpref),:);
-clear all;
+
 n=50;
 m=1000;
 
@@ -1046,32 +1046,3 @@ preferences =[
     16    27
     40    21
     14    47];
-
-
-cvx_begin
-variable R(50)
-V = max(R(preferences(:,2))+1-R(preferences(:,1)),0)
-minimize(sum(square_phi(V)))
-cvx_end
-sum(V>0.001)
-histogram(V)
-
-cvx_begin
-variable R(50)
-V = R(preferences(:,2))+1-R(preferences(:,1))
-minimize(sum(huber_phi(V)))
-subject to
-    R(preferences(:,2))+1-R(preferences(:,1)) >= 0
-cvx_end
-sum(V>0.001)
-histogram(V)
-
-function square_penalty = square_phi( x )
-square_penalty = pow_pos(x, 2)
-end
-
-function huber_penalty = huber_phi( x )
-huber_penalty = huber(x)
-end
-
-
