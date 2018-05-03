@@ -444,6 +444,64 @@ Note: $A^+ = max(A, 0)$ and $A^- = max(-A, 0)$
 & \nabla^2 \psi = t\begin{bmatrix} I\\ -I\end{bmatrix}diag(u-l)^{-2}\begin{bmatrix} I\\ -I\end{bmatrix}^T + \begin{bmatrix} -A^-^T \\ A^+^T\end{bmatrix}diag(b-A^+u+A^-l)^{-2} \begin{bmatrix} -A^-^T\\ A^+^T\end{bmatrix}^T\\
 \end{aligned}
 \end{equation*}
+\textbf{Code:}\\
+\begin{lstlisting}
+MAXITERS = 200;
+ALPHA = 0.01;
+BETA = 0.5;
+NTTOL = 1e-8;
+% terminate Newton iterations if lambda^2 < NTTOL
+MU = 20;
+TOL = 1e-4;
+n = 2
+A = [0 -1; 2 -4; 2 1; -4 4; -4 0]
+b = ones(5,1)
+m = 5
+% terminate if duality gap less than TOL
+Ap = max(A,0); Am = max(-A,0);
+
+r = max(Ap*ones(n,1) + Am*ones(n,1));
+u = (.5/r)*ones(n,1); l = -(.5/r)*ones(n,1);
+t = 1;
+for iter = 1:MAXITERS
+    y = b+Am*l-Ap*u;
+    val = -t*sum(log(u-l)) - sum(log(y));
+    grad = t*[1./(u-l); -1./(u-l)] + [-Am'; Ap']*(1./y);
+    hess = t*[diag(1./(u-l).^2), -diag(1./(u-l).^2); -diag(1./(u-l).^2), diag(1./(u-l).^2)] + [-Am'; Ap']*diag(1./y.^2)*[-Am Ap];
+    step = -hess\grad; 
+    fprime = grad'*step;
+    if (abs(fprime) < NTTOL)
+        gap = (2*m)/t;
+        disp(['iter', int2str(iter), '; gap = ', num2str(gap)]);
+        if (gap<TOL)
+            break;
+        end
+        t = MU*t;
+     else
+        dl = step(1:n); du = step(n+[1:n]);
+        dy = Am*dl-Ap*du;
+        tls = 1;
+        while (min([u-l+tls*(du-dl); y+tls*dy]) <= 0)
+            tls = BETA*tls;
+        end
+        while (-t*sum(log(u-l+tls*(du-dl))) - sum(log(y+tls*dy)) >= val + tls*ALPHA*fprime)
+            tls = BETA*tls;
+        end
+        l = l+tls*dl; u = u+tls*du;
+    end
+end
+plotregion(-A,-b,[], [], [])
+hold on
+bbox = [l(1), l(2), u(1), u(2)]
+points = bbox2points(bbox)
+plot(points(:,1),points(:,2), '*-');
+hold off
+\end{lstlisting}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{inscribed_box.jpg}
+    \caption{Inscribed box contained by polyhedron defined by constraints.}
+\end{figure}
 % --------------------------------------------------------------
 %     You don't have to mess with anything below this line.
 % --------------------------------------------------------------

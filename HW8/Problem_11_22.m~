@@ -42,11 +42,26 @@ for iter = 1:MAXITERS
         l = l+tls*dl; u = u+tls*du;
     end
 end
-plotregion(-A,-b,[], [], [])
-hold on
-bbox = [l(1), l(2), u(1), u(2)]
-points = bbox2points(bbox)
-plot(points(:,1),points(:,2), '*-');
+y1 = @(x) -1
+y2 = @(x) .5*x -.25
+y3 = @(x) 1- 2*x
+y4 = @(x) .25 - x
+t5
 
-hold off
+X=[x1(1); x2(1); x3(1); x4(1); x5(1)];
+Y=[x1(1); x2(2); x3(2); x4(2); x5(2)];
+k = convhull(X, Y)
+plot(X(k), Y(k))
+
+% bbox = [l(1), l(2), u(1), u(2)]
+% 
+% points = bbox2points(bbox)
+% plot(points(:,1),points(:,2), '*-');
+% hold on
+% fplot(y1, [-1,1])
+% fplot(y2, [-1,1])
+% fplot(y3, [-1,1])
+% fplot(y4, [-1,1])
+% fplot(y5, [-1,1])
+% hold off
 
