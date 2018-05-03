@@ -21,9 +21,9 @@ for i = 1:iter
     d = 1./(1-A*x);
     % first order derivative
     grad = A'*d - 1./(1+x) + 1./(1-x);
-    grad
     % second order derivative i.e. hessian
-    hessian = A'*diag(d.^2)*A + diag(1./(1+x).^2 + 1./(1-x).^2);
+    hessian = diag(diag(A'*diag(d.^2)*A + diag(1./(1+x).^2 + 1./(1-x).^2)));
+    
     % direction
     dir = -hessian\grad;
     % lambda^2 i.e decrement
